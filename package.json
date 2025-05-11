@@ -1,0 +1,23 @@
+{
+  "name": "allpassdesigner",
+  "version": "1.0.0",
+  "description": "Design all-pass filters by placing and moving poles graphically.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Selim-Sheta/AllPassDesigner.git"
+  },
+  "author": "Selim Sheta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Selim-Sheta/AllPassDesigner/issues"
+  },
+  "homepage": "https://github.com/Selim-Sheta/AllPassDesigner#readme",
+  "devDependencies": {
+    "electron": "^36.2.0"
+  }
+}
