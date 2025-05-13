@@ -1,8 +1,22 @@
+// S. Sheta 2025
+// A single pole handle component.
+
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function Pole({ x, y, onDrag, onDragStart, onDragEnd, radius, isActive }) {
+export default function PoleHandle({
+    id,
+    x,
+    y,
+    radius,
+    isActive,
+    onDragStart,
+    onDrag,
+    onDragEnd,
+    diameter = 30,
+    className = ''
+}) {
     const ref = useRef(null);
-    const [localRadius, setLocalRadius] = useState(0);
+    const [localRadius, setLocalRadius] = useState(diameter / 2);
 
     useEffect(() => {
         if (ref.current) {
@@ -11,30 +25,32 @@ export default function Pole({ x, y, onDrag, onDragStart, onDragEnd, radius, isA
         }
     }, []);
 
-    const handleMouseDown = (e) => {
-        e.stopPropagation();
-        onDragStart();
-    };
-
     useEffect(() => {
-        const handleMouseMove = (e) => {
-            if (!isActive) return;
+        if (!isActive) return;
 
-            const rect = ref.current.parentElement.getBoundingClientRect();
-            const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const handleMouseMove = (e) => {
+            if (!ref.current) return;
+
+            const parentRect = ref.current.parentElement.getBoundingClientRect();
+            const center = {
+                x: parentRect.left + parentRect.width / 2,
+                y: parentRect.top + parentRect.height / 2
+            };
+
             const dx = e.clientX - center.x;
             const dy = e.clientY - center.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             const angle = Math.atan2(dy, dx);
             const clamped = Math.min(distance, radius);
-            onDrag({
+
+            onDrag(id, {
                 x: clamped * Math.cos(angle),
                 y: clamped * Math.sin(angle)
             });
         };
 
         const handleMouseUp = () => {
-            if (isActive) onDragEnd();
+            onDragEnd(id);
         };
 
         window.addEventListener('mousemove', handleMouseMove);
@@ -43,15 +59,27 @@ export default function Pole({ x, y, onDrag, onDragStart, onDragEnd, radius, isA
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isActive, radius, onDrag, onDragEnd]);
+    }, [isActive, radius, onDrag, onDragEnd, id]);
+
+    const handleMouseDown = (e) => {
+        e.stopPropagation();
+        onDragStart(id);
+    };
 
     return (
         <div
             ref={ref}
             onMouseDown={handleMouseDown}
-            className="inner-circle"
+            className={className}
             style={{
                 transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
+                width: `${diameter}px`,
+                height: `${diameter}px`,
+                borderRadius: '50%',
+                backgroundColor: '#333',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
                 cursor: isActive ? 'grabbing' : 'grab'
             }}
         />
