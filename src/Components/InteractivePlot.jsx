@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { UnitCircle } from './UnitCircle';
-import Pole from './Pole';
-import '../styles.css';
+import { UnitCircle } from '../Components/UnitCircle';
+import Pole from '../Components/Pole';
+import '../index.css';
 
 let idCounter = 0;
 

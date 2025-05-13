@@ -1,3 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui;
+  --color-primary: oklch(0.72 0.18 250);
+}
+
 body {
     background-color: #f0f0f0;
     font-family: sans-serif;

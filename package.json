@@ -1,37 +1,31 @@
 {
-  "name": "allpassdesigner",
-  "version": "1.0.0",
-  "description": "Design all-pass filters by placing and moving poles graphically.",
-  "main": "main.js",
+  "name": "all-pass-designer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "electron .",
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Selim-Sheta/AllPassDesigner.git"
-  },
-  "author": "Selim Sheta",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Selim-Sheta/AllPassDesigner/issues"
-  },
-  "homepage": "https://github.com/Selim-Sheta/AllPassDesigner#readme",
-  "devDependencies": {
-    "@babel/core": "^7.27.1",
-    "@babel/preset-env": "^7.27.2",
-    "@babel/preset-react": "^7.27.1",
-    "babel-loader": "^10.0.0",
-    "css-loader": "^7.1.2",
-    "electron": "^36.2.0",
-    "style-loader": "^4.0.0",
-    "webpack": "^5.99.8",
-    "webpack-cli": "^6.0.1"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "complex.js": "^2.4.2",
+    "@tailwindcss/vite": "^4.1.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.6",
+    "vite": "^6.3.5"
   }
 }
