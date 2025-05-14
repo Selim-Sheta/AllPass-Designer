@@ -4,39 +4,77 @@
 import React from 'react';
 
 export default function PoleTable({ poles, onEdit, onDelete }) {
+
+    function onUserInput(poleId, real, imag) {
+        if (isNaN(real) || isNaN(imag)) {
+            real = 0;
+            imag = 0;
+        }
+
+        const mag = Math.sqrt(real * real + imag * imag);
+        if (mag >= 1) {
+            const scale = 0.9999 / mag; // just below 1
+            real *= scale;
+            imag *= scale;
+        }
+
+        onEdit(poleId, {
+            real: parseFloat(real.toFixed(2)),
+            imag: parseFloat(imag.toFixed(2))
+        });
+    }
+
     return (
-        <div className="pole-list">
-            <h3>Poles</h3>
-            <div className="pole-table-scrollable">
-                {poles.map((p) => (
-                    <div key={p.id} className="pole-row">
-                        <span>ID: {p.id}</span>
-                        <span>
-                            Real:
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={p.pos.x}
-                                onChange={(e) =>
-                                    onEdit(p.id, { x: parseFloat(e.target.value), y: p.pos.y })
+        <div className="scrollable-table">
+            {poles.map((p) => (
+                <div key={p.id} className="table-row">
+                    <span>ID: {p.id}</span>
+                    <span>
+                        Real:
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={parseFloat(p.pos.real.toFixed(4))}
+                            min="-1"
+                            max="1"
+                            onChange={(e) =>
+                                onUserInput(p.id, parseFloat(e.target.value), p.pos.imag)
+                            }
+                            onBlur={(e) =>
+                                onUserInput(p.id, parseFloat(e.target.value), p.pos.imag)
+                            }
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    onUserInput(p.id, parseFloat(e.target.value), p.pos.imag);
                                 }
-                            />
-                        </span>
-                        <span>
-                            Imag:
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={-p.pos.y}
-                                onChange={(e) =>
-                                    onEdit(p.id, { x: p.pos.x, y: -parseFloat(e.target.value) })
+                            }}
+                        />
+                    </span>
+                    <span>
+                        Imag:
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={parseFloat(p.pos.imag.toFixed(4))}
+                            min="-1"
+                            max="1"
+                            onChange={(e) =>
+                                onUserInput(p.id, p.pos.real, parseFloat(e.target.value))
+                            }
+                            onBlur={(e) =>
+                                onUserInput(p.id, p.pos.real, parseFloat(e.target.value))
+                            }
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    onUserInput(p.id, p.pos.real, parseFloat(e.target.value));
                                 }
-                            />
-                        </span>
-                        <button onClick={() => onDelete(p.id)}>X</button>
-                    </div>
-                ))}
-            </div>
+                            }}
+                        />
+                    </span>
+
+                    <button onClick={() => onDelete(p.id)}>X</button>
+                </div>
+            ))}
         </div>
     );
 }

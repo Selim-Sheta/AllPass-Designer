@@ -3,18 +3,8 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function PoleHandle({
-    id,
-    x,
-    y,
-    radius,
-    isActive,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-    diameter = 30,
-    className = ''
-}) {
+export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, diameter = 30}) 
+{
     const ref = useRef(null);
     const [localRadius, setLocalRadius] = useState(diameter / 2);
 
@@ -24,7 +14,7 @@ export default function PoleHandle({
             setLocalRadius(rect.width / 2);
         }
     }, []);
-
+ 
     useEffect(() => {
         if (!isActive) return;
 
@@ -70,16 +60,11 @@ export default function PoleHandle({
         <div
             ref={ref}
             onMouseDown={handleMouseDown}
-            className={className}
+            className='pole-handle'
             style={{
                 transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
                 width: `${diameter}px`,
                 height: `${diameter}px`,
-                borderRadius: '50%',
-                backgroundColor: '#333',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
                 cursor: isActive ? 'grabbing' : 'grab'
             }}
         />
