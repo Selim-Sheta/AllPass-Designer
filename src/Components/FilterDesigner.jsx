@@ -70,12 +70,14 @@ export default function FilterDesigner() {
                         />
                     ))}
                 </UnitCircle>
-                <PoleTable
-                    poles={poles}
-                    onAddPole={addPole}
-                    onEdit={updatePole}
-                    onDelete={removePole}
-                />
+                <div className = "table-container">
+                    <button onClick={() => addPole({ x: 0, y: 0 })}>+</button>
+                    <PoleTable
+                        poles={poles}
+                        onEdit={updatePole}
+                        onDelete={removePole}
+                    />
+                </div>
             </div>
             <PhasePlot poles={poles} />
             <button className="download-btn" onClick={() => {/* TBD */ }}>
