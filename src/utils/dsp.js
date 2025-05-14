@@ -7,6 +7,11 @@ import Complex from 'complex.js';
  * @returns {Complex[]} - complex frequency response at each w
  */
 export function calculateAllPassFrequencyResponse(w, poles) {
+    for (const p of poles) {
+        if (!(p instanceof Complex)) {
+            throw new Error('poles must be instances of Complex');
+        }
+    }
     return w.map(freq => {
         const z = Complex({ abs: 1, arg: freq }); // z = e^(jω)
         let H = new Complex(1, 0);
@@ -25,6 +30,11 @@ export function calculateAllPassFrequencyResponse(w, poles) {
 * @returns {number[]} - phase of the complex array
 */
 export function getPhase(h) {
+    for (const item of h) {
+        if (!(item instanceof Complex)) {
+            throw new Error('h must be instances of Complex');
+        }
+    }
     return h.map((h) => {
         if (h.re === 0 && h.im === 0) {
             return 0;
@@ -34,20 +44,24 @@ export function getPhase(h) {
 }
  
 /**
- * @param {number[]} phase - list of phase values in radians
- * @param {number} e - epsilon value for phase unwrapping
- * @returns {number[]} - unwrapped phase
+ * @param {number[]} phase - Array of wrapped phase values in radians
+ * @returns {number[]} - Unwrapped phase values
  */
-function unwrapPhase(phase, e = 1e-6) {
+export function unwrapPhase(phase) {
     const unwrapped = [phase[0]];
+    let offset = 0;
+
     for (let i = 1; i < phase.length; i++) {
         let delta = phase[i] - phase[i - 1];
-        if (delta > Math.PI - e) {
-            delta -= 2 * Math.PI;
-        } else if (delta < - Math.PI + e) {
-            delta += 2 * Math.PI;
+
+        if (delta > Math.PI) {
+            offset -= 2 * Math.PI;
+        } else if (delta < -Math.PI) {
+            offset += 2 * Math.PI;
         }
-        unwrapped.push(unwrapped[i - 1] + delta);
+
+        unwrapped.push(phase[i] + offset);
     }
+
     return unwrapped;
 }

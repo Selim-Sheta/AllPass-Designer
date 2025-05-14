@@ -103,12 +103,17 @@ select,
     pointer-events: none;
 }
 
-
-
 .table-row {
     display: flex;
     justify-content: space-between;
     margin: 4px 0;
     gap: 8px;
+}
+
+.phase-plot{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
