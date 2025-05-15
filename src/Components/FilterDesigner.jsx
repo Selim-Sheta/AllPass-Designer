@@ -1,11 +1,11 @@
 // S. Sheta 2025
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UnitCircle from './UnitCircle';
 import PoleHandle from './PoleHandle';
 import PoleTable from './PoleTable';
 import PhasePlot from './PhasePlot';
-
+import OptionsPanel from './OptionsPanel';
 let idCounter = 0;
 
 export default function FilterDesigner() {
@@ -40,16 +40,31 @@ export default function FilterDesigner() {
         setActiveId(id);
     };
 
+    // OPTIONS HANDLER
+    const [options, setOptions] = useState({
+        enforceRealOutput: false,
+        coordSystem: 'rect',
+        displayTheme: 'light'
+    });
+
+    const updateOption = (key, value) => {
+        setOptions((prev) => ({ ...prev, [key]: value }));
+    };
+
+    useEffect(() => {
+        document.body.classList.toggle('dark', options.displayTheme === 'dark');
+    }, [options.displayTheme]);
+
+
     return (
         <div className="app-container">
-            <div className="options-panel">
-                <h2>Options (Coming Soon)</h2>
-            </div>
+            <OptionsPanel options={options} updateOption={updateOption} />
             <div className="filter-design-panel">
                 <UnitCircle
                     onAddPole={addPole}
                     onStartImmediateDrag={startImmediateDrag}
                     onResize={setUnitRadius}
+                    coordSystem={options.coordSystem}
                 >
                     {poles.map((p) => (
                         <PoleHandle
@@ -76,6 +91,7 @@ export default function FilterDesigner() {
                         poles={poles}
                         onEdit={updatePole}
                         onDelete={removePole}
+                        coordSystem={options.coordSystem}
                     />
                 </div>
             </div>

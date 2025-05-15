@@ -1,9 +1,9 @@
 // S. Sheta 2025
 // Handles visual pole input and updates
 import React, { useRef, useEffect, useState } from 'react';
+import GridBackground from './GridBackground';
 
-export default function UnitCircle({children,onAddPole,onStartImmediateDrag,onResize}) 
-{
+export default function UnitCircle({ children, onAddPole, onStartImmediateDrag, onResize, coordSystem }) {
     const ref = useRef(null);
     const [radius, setRadius] = useState(0);
     const [center, setCenter] = useState({ x: 0, y: 0 });
@@ -74,13 +74,19 @@ export default function UnitCircle({children,onAddPole,onStartImmediateDrag,onRe
         }
     };
 
-    
+
     return (
         <div
             ref={ref}
             className="unit-circle"
             onMouseDown={handleMouseDown}
         >
+            <GridBackground
+                width={radius * 2}
+                height={radius * 2}
+                coordSystem={coordSystem}
+                radius={radius}
+            />
             {children}
             <div className="origin-marker" />
         </div>
