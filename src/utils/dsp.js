@@ -49,13 +49,6 @@ export function getPhase(h) {
 export function unwrapPhase(phase) {
     const unwrapped = [phase[0]];
     let offset = 0;
-    // if (phase[0] > Math.PI) {
-    //     unwrapped[0] = phase[0] - 2 * Math.PI;
-    //     offset = -2 * Math.PI;
-    // } else if (phase[0] < -Math.PI) {
-    //     unwrapped[0] = phase[0] + 2 * Math.PI;
-    //     offset = 2 * Math.PI;
-    // }
 
     for (let i = 1; i < phase.length; i++) {
         let delta = phase[i] - phase[i - 1];
@@ -101,4 +94,43 @@ export function calculateGroupDelay(phase, w) {
     }
     groupDelay.unshift(groupDelay[0]); // Duplicate the first value
     return groupDelay;
+}
+
+/**
+ * Calculate feedback coefficients from poles. The result corresponds to the 
+ * coefficients of the polynomial expansion of (1 - p1*z^-1)(1 - p2*z^-1)...(1 - pn*z^-1),
+ * where p1, p2, ..., pn are the poles.
+ * @param {Complex[]} poles - list of complex poles
+ * @returns {Complex[]} - feedback coefficients
+ */
+export function calculateFeedbackCoefficients(poles) {
+    for (const p of poles) {
+        if (!(p instanceof Complex)) {
+            throw new Error('poles must be instances of Complex');
+        }
+    }
+
+    let coeffs = [new Complex(1, 0)];
+
+    for (const p of poles) {
+        const next = Array(coeffs.length + 1).fill().map(() => new Complex(0, 0));
+        for (let i = 0; i < coeffs.length; i++) {
+            next[i] = next[i].add(coeffs[i]);                  // term without p
+            next[i + 1] = next[i + 1].sub(coeffs[i].mul(p));   // term with -p*z^-1
+        }
+        coeffs = next;
+    }
+
+    return coeffs;
+}
+
+/** 
+ * Extract real and imaginary parts of a complex array
+ * @param {Complex[]} complexArray - array of complex numbers
+ * @returns {real: number[], imag: number[]} - object with real and imaginary parts
+ */
+export function extractRealImaginary(complexArray) {
+    const real = complexArray.map(c => c.re);
+    const imag = complexArray.map(c => c.im);
+    return { real, imag };
 }

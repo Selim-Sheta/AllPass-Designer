@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import UnitCircle from './UnitCircle';
 import PoleHandle from './PoleHandle';
 import PoleTable from './PoleTable';
+import CoeffTable from './CoeffTable';
 import PhasePlot from './PhasePlot';
 import OptionsPanel from './OptionsPanel';
 let idCounter = 0;
@@ -86,24 +87,25 @@ export default function FilterDesigner() {
                         />
                     ))}
                 </UnitCircle>
-                <div className = "table-container">
-                    <button onClick={() => addPole({ x: 0, y: 0 })}>+</button>
-                    <PoleTable
-                        poles={poles}
-                        onEdit={updatePole}
-                        onDelete={removePole}
-                        coordSystem={options.coordSystem}
-                        enforceRealOutput={options.enforceRealOutput}
-                    />
-                </div>
+                <PoleTable
+                    poles={poles}
+                    onAdd={addPole}
+                    onEdit={updatePole}
+                    onDelete={removePole}
+                    coordSystem={options.coordSystem}
+                    enforceRealOutput={options.enforceRealOutput}
+                />
             </div>
-            <PhasePlot 
-                poles={poles} 
-                enforceRealOutput={options.enforceRealOutput}
-            />
-            <button className="download-btn" onClick={() => {/* TBD */ }}>
-                Download Coefficients
-            </button>
+            <div className='filter-design-panel'>
+                <PhasePlot 
+                    poles={poles} 
+                    enforceRealOutput={options.enforceRealOutput}
+                />
+                <CoeffTable
+                    poles={poles}
+                    enforceRealOutput={options.enforceRealOutput}
+                />
+            </div>
         </div>
     );
 }
