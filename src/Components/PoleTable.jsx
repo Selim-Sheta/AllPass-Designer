@@ -3,7 +3,11 @@
 
 import React from 'react';
 
-export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforceRealOutput }) {
+export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem, enforceRealOutput }) {
+
+    const addPole = () =>{
+        onAdd({ x: 0, y: 0 });
+    }
 
     function onUserInput(poleId, input1, input2) {
         if (isNaN(input1) || isNaN(input2)) return;
@@ -36,8 +40,8 @@ export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforc
         if (coordSystem === 'rect') {
             return (
                 <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className="table-row ghost-row">
-                    <span>ID: {displayId}</span>
-                    <span>
+                    <span  className='table-cell'>ID: {displayId}</span>
+                    <span  className='table-cell'>
                         Real:
                         <input
                             type="number"
@@ -59,7 +63,7 @@ export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforc
                             }}
                         />
                     </span>
-                    <span>
+                    <span  className='table-cell'>
                         Imag:
                         <input
                             type="number"
@@ -91,8 +95,8 @@ export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforc
 
         return (
             <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className="table-row ghost-row">
-                <span>ID: {displayId}</span>
-                <span>
+                <span  className='table-cell'>ID: {displayId}</span>
+                <span  className='table-cell'>
                     Mag:
                     <input
                         type="number"
@@ -114,7 +118,7 @@ export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforc
                         }}
                     />
                 </span>
-                <span>
+                <span  className='table-cell'>
                     Angle:
                     <input
                         type="number"
@@ -143,24 +147,27 @@ export default function PoleTable({ poles, onEdit, onDelete, coordSystem, enforc
 
 
     return (
-        <div className="scrollable-table">
-            {poles.flatMap((p) => {
-                const rows = [renderPoleRow(p, false)];
-                if (
-                    enforceRealOutput &&
-                    Math.abs(p.pos.imag) > 1e-6
-                ) {
-                    const ghost = {
-                        ...p,
-                        pos: {
-                            real: p.pos.real,
-                            imag: -p.pos.imag
-                        }
-                    };
-                    rows.push(renderPoleRow(ghost, true));
-                }
-                return rows;
-            })}
+        <div className = "table-container">
+            <button onClick={addPole}>+</button>
+            <div className="scrollable-table">
+                {poles.flatMap((p) => {
+                    const rows = [renderPoleRow(p, false)];
+                    if (
+                        enforceRealOutput &&
+                        Math.abs(p.pos.imag) > 1e-6
+                    ) {
+                        const ghost = {
+                            ...p,
+                            pos: {
+                                real: p.pos.real,
+                                imag: -p.pos.imag
+                            }
+                        };
+                        rows.push(renderPoleRow(ghost, true));
+                    }
+                    return rows;
+                })}
+            </div>
         </div>
     );
 }

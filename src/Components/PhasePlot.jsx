@@ -30,15 +30,22 @@ export default function PhasePlot({ poles, logScale = false, enforceRealOutput }
     const layout = useMemo(() => ({
         margin: { t: 20, r: 10, b: 40, l: 50 },
         xaxis: {
-            title: 'Normalized Frequency (rad/sample)',
+            title: 'Normalized Frequency (rads)',
             type: logScale ? 'log' : 'linear',
-            range: logScale ? [0.01, Math.PI] : [0, Math.PI]
+            range: logScale ? [0.01, Math.PI] : [0, Math.PI],
+            
         },
         yaxis: {
             title: 'Phase (radians)',
-            range: [-Math.PI, Math.PI]
+            range: [-Math.PI, Math.PI],
+            autorange: true
         },
     }), [logScale]);
+
+    const config = {
+        responsive: false,
+        displaylogo: false,
+    }
 
     return (
         <div className="phase-plot">
@@ -53,7 +60,7 @@ export default function PhasePlot({ poles, logScale = false, enforceRealOutput }
                     }
                 ]}
                 layout={layout}
-                config={{ responsive: false}}
+                config={config}
             />
         </div>
     );

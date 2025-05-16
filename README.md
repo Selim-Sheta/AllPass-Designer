@@ -3,7 +3,7 @@
 A web app to design all-pass filters by placing and editing poles directly on the unit circle.
 
 To do:
-- Display/copy coefficients
+- Download/copy coefficients
 - Download results
 - Styling
 - Shift-click to delete poles
@@ -12,6 +12,8 @@ To do:
 - Upload files
 - ID on poles
 - Improve annoying inputs in table
+- Better Default Options
+- Save state in URL
 
 Done/Fixed
 - Phase calculation incorrect
@@ -19,3 +21,4 @@ Done/Fixed
 - Re/Im or Mag/Arg
 - Dark mode
 - Axes on unit circle
+- Display Coefficients
