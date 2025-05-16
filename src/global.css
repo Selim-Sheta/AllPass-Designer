@@ -97,6 +97,10 @@ select,
     cursor: grab;
 }
 
+.pole-handle.ghost{
+    background-color: var(--accent);
+}
+
 .origin-marker {
     width: 4px;
     height: 4px;

@@ -3,7 +3,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, diameter = 30}) 
+export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, diameter = 30, enforceRealOutput, imagValue}) 
 {
     const ref = useRef(null);
     const [localRadius, setLocalRadius] = useState(diameter / 2);
@@ -57,16 +57,35 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
     };
 
     return (
-        <div
-            ref={ref}
-            onMouseDown={handleMouseDown}
-            className='pole-handle'
-            style={{
-                transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
-                width: `${diameter}px`,
-                height: `${diameter}px`,
-                cursor: isActive ? 'grabbing' : 'grab'
-            }}
-        />
+        <>
+            <div
+                ref={ref}
+                onMouseDown={handleMouseDown}
+                className='pole-handle'
+                style={{
+                    transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
+                    width: `${diameter}px`,
+                    height: `${diameter}px`,
+                    cursor: isActive ? 'grabbing' : 'grab',
+                    zIndex: 1
+                }}
+            >
+            </div>
+            {/* Ghost pole: appears if EnforceRealOutput is on and imag ≠ 0 */}
+            {enforceRealOutput && Math.abs(imagValue) > 1e-6 && (
+                <div
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="pole-handle ghost"
+                    style={{
+                        transform: `translate(${x - localRadius}px, ${-y - localRadius}px)`,
+                        width: `${diameter}px`,
+                        height: `${diameter}px`,
+                        opacity: Math.min(0.5, Math.max(0.1, Math.abs(imagValue))),
+                        cursor: 'not-allowed',
+                        zIndex: 0 // explicitly behind
+                    }}
+                />
+            )}
+        </>
     );
 }

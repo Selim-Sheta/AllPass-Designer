@@ -2,9 +2,9 @@
 import React, { useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import Complex from 'complex.js';
-import { calculateAllPassFrequencyResponse, getPhase, unwrapPhase } from '../utils/dsp';
+import { calculateAllPassFrequencyResponse, calculatePhaseDelay, getPhase, unwrapPhase } from '../utils/dsp';
 
-export default function PhasePlot({ poles, logScale = false }) {
+export default function PhasePlot({ poles, logScale = false, enforceRealOutput }) {
     // Frequencies from 0 to π (normalized angular frequency)
     const w = useMemo(() => {
         const N = 512;
@@ -13,11 +13,19 @@ export default function PhasePlot({ poles, logScale = false }) {
 
     const phase = useMemo(() => {
         const complexPoles = poles.map(p => new Complex(p.pos.real, p.pos.imag));
+        // For every non-real pole, add its conjugate to the list
+        if (enforceRealOutput) {
+            const conjugates = complexPoles
+                .filter(p => p.im !== 0)
+                .map(p => new Complex(p.re, -p.im));
+            complexPoles.push(...conjugates);
+        }
         const H = calculateAllPassFrequencyResponse(w, complexPoles);
         const phase = getPhase(H);
         const unwrappedPhase = unwrapPhase(phase);
-        return unwrappedPhase;
-    }, [w, poles]);
+        const phaseDelay = calculatePhaseDelay(unwrappedPhase, w);
+        return phaseDelay;
+    }, [w, poles, enforceRealOutput]);
 
     const layout = useMemo(() => ({
         margin: { t: 20, r: 10, b: 40, l: 50 },

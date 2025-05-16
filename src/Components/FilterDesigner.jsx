@@ -55,7 +55,6 @@ export default function FilterDesigner() {
         document.body.classList.toggle('dark', options.displayTheme === 'dark');
     }, [options.displayTheme]);
 
-
     return (
         <div className="app-container">
             <OptionsPanel options={options} updateOption={updateOption} />
@@ -82,6 +81,8 @@ export default function FilterDesigner() {
                             }}
                             onDragEnd={() => setActiveId(null)}
                             diameter={30}
+                            enforceRealOutput={options.enforceRealOutput}
+                            imagValue={p.pos.imag}
                         />
                     ))}
                 </UnitCircle>
@@ -92,10 +93,14 @@ export default function FilterDesigner() {
                         onEdit={updatePole}
                         onDelete={removePole}
                         coordSystem={options.coordSystem}
+                        enforceRealOutput={options.enforceRealOutput}
                     />
                 </div>
             </div>
-            <PhasePlot poles={poles} />
+            <PhasePlot 
+                poles={poles} 
+                enforceRealOutput={options.enforceRealOutput}
+            />
             <button className="download-btn" onClick={() => {/* TBD */ }}>
                 Download Coefficients
             </button>
