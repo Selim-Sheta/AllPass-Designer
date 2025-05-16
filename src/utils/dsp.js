@@ -13,12 +13,11 @@ export function calculateAllPassFrequencyResponse(w, poles) {
         }
     }
     return w.map(freq => {
-        const z = Complex({ abs: 1, arg: freq }); // z = e^(jω)
+        const zInv = Complex({ abs: 1, arg: -freq }); // z = e^(-jω)
         let H = new Complex(1, 0);
         for (const p of poles) {
-            const zero = Complex(1, 0).div(p.conjugate()); // 1 / p*
-            const num = z.sub(zero);
-            const den = new Complex(1, 0).sub(p.mul(z));
+            const num = zInv.sub(p.conjugate());
+            const den = new Complex(1, 0).sub(p.mul(zInv));
             H = H.mul(num.div(den));
         }
         return H;
@@ -50,6 +49,13 @@ export function getPhase(h) {
 export function unwrapPhase(phase) {
     const unwrapped = [phase[0]];
     let offset = 0;
+    // if (phase[0] > Math.PI) {
+    //     unwrapped[0] = phase[0] - 2 * Math.PI;
+    //     offset = -2 * Math.PI;
+    // } else if (phase[0] < -Math.PI) {
+    //     unwrapped[0] = phase[0] + 2 * Math.PI;
+    //     offset = 2 * Math.PI;
+    // }
 
     for (let i = 1; i < phase.length; i++) {
         let delta = phase[i] - phase[i - 1];
@@ -64,4 +70,35 @@ export function unwrapPhase(phase) {
     }
 
     return unwrapped;
+}
+
+/**
+ * @param {number[]} phase - Array of unwrapped phase values in radians
+ * @param {number[]} w - Array of normalized angular frequencies
+ * @returns {number[]} - phase delay (-φ/ω)
+ */
+export function calculatePhaseDelay(phase, w) {
+    if (phase.length !== w.length) {
+        throw new Error('Phase and frequency arrays must have the same length');
+    }
+    return phase.map((p, i) => -p / w[i]);
+}
+
+/**
+ * @param {number[]} phase - Array of unwrapped phase values in radians
+ * @param {number[]} w - Array of normalized angular frequencies
+ * @returns {number[]} - group delay (-dφ/dω)
+ */
+export function calculateGroupDelay(phase, w) {
+    if (phase.length !== w.length) {
+        throw new Error('Phase and frequency arrays must have the same length');
+    }
+    const groupDelay = [];
+    for (let i = 1; i < phase.length; i++) {
+        const deltaPhase = phase[i] - phase[i - 1];
+        const deltaW = w[i] - w[i - 1];
+        groupDelay.push(-deltaPhase / deltaW);
+    }
+    groupDelay.unshift(groupDelay[0]); // Duplicate the first value
+    return groupDelay;
 }
