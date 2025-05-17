@@ -40,17 +40,16 @@ npm run dev
 
 ## 📋 To Do List
 - Improve styling and UI
-- Fix duplicate keys bug
 - Plot: frequency axis with editable nyquist, Phase in degrees
+- Plot: log toggle
 - Plot: Drop-down to select between phase, phase delay, group delay
-- Show ID on pole handles
 - Improve annoying inputs in table
-- Auto-save state in URL
-- Lock pole components
+
 - Listen to result in real-time
-- Fit to reference
 - Export as Biquads
 - Stereo Design Mode
+- Lock pole components
+- Fit to reference
 
 ## ⚖️ License
 Licensed under the Polyform Noncommercial License 1.0.0. See LICENSE file for details.

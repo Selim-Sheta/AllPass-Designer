@@ -47,3 +47,9 @@ export function loadFromURL() {
         return null;
     }
 }
+
+export function updateURL(state) {
+    const stateStr = getURLState(state);
+    const newURL = `${window.location.origin}${window.location.pathname}?state=${stateStr}`;
+    window.history.replaceState(null, '', newURL);
+}

@@ -7,7 +7,7 @@ import PoleHandle from './PoleHandle';
 import PoleTable from './PoleTable';
 import CoeffTable from './CoeffTable';
 import PhasePlot from './PhasePlot';
-import {saveToFile,loadFromFile,getURLState,loadFromURL} from '../utils/stateIO';
+import {saveToFile,loadFromFile,getURLState,loadFromURL,updateURL} from '../utils/stateIO';
 
 let idCounter = 1;
 export default function FilterDesigner() {
@@ -43,6 +43,7 @@ export default function FilterDesigner() {
         const imag = -pixelPos.y / unitRadius;
         const newPole = { id: idCounter++, pos: { real, imag } };
         setPoles((prev) => [...prev, newPole]);
+        setTimeout(updateURL({ poles, options, idCounter }), 0);
         return newPole.id;
     };
 
@@ -52,6 +53,7 @@ export default function FilterDesigner() {
                 p.id === id ? { ...p, pos: { ...p.pos, ...updates } } : p
             )
         );
+        setTimeout(updateURL({ poles, options, idCounter }), 0);
     };
 
     const removePole = (id) => {
@@ -65,6 +67,7 @@ export default function FilterDesigner() {
             return reassigned;
         });
         if (id === activeId) setActiveId(null);
+        setTimeout(updateURL({ poles, options, idCounter }), 0);
     };
 
     const startImmediateDrag = (id) => {
