@@ -2,11 +2,17 @@
 // This component is responsible for global settings.
 
 import React from 'react';
-import { Switch, FormControlLabel, FormGroup, Tooltip } from '@mui/material';
+import { Switch, FormControlLabel, FormGroup, Tooltip, IconButton } from '@mui/material';
+import { LuClipboardCopy, LuClipboardCheck, LuDownload, LuFolderOpen, LuSave, LuShare2 } from "react-icons/lu";
 
-export default function OptionsPanel({ options, updateOption }) {
+export default function OptionsPanel({ options, updateOption, onSave, onLoad, onCopyLink }) {
     return (
         <div className="options-panel">
+            <div className="state-toolbar">
+                <button title="save" className="icon-button" onClick={onSave}><LuSave/></button>
+                <button title="open" className="icon-button" onClick={onLoad}><LuFolderOpen/></button>
+                <button title="share" className="icon-button" onClick={onCopyLink}><LuShare2/></button>
+            </div>
             <FormGroup row>
                 <Tooltip title="Automatically pair complex poles with a conjugate twin">
                     <FormControlLabel

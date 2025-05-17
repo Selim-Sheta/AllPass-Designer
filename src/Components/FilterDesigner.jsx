@@ -7,12 +7,26 @@ import PoleTable from './PoleTable';
 import CoeffTable from './CoeffTable';
 import PhasePlot from './PhasePlot';
 import OptionsPanel from './OptionsPanel';
+import {saveToFile,loadFromFile,getURLState,loadFromURL} from '../utils/stateIO';
+
 let idCounter = 0;
 
 export default function FilterDesigner() {
     const [poles, setPoles] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [unitRadius, setUnitRadius] = useState(null);
+
+    //Apply loaded state
+    function hydrateState(data) {
+        if (data.poles) setPoles(data.poles);
+        if (data.options) setOptions(prev => ({ ...prev, ...data.options }));
+    }
+
+    // Load from URL on mount
+    useEffect(() => {
+        const state = loadFromURL();
+        if (state) hydrateState(state);
+    }, []);
 
     // HANDLERS FOR POLE MANAGEMENT
     const addPole = (pixelPos) => {
@@ -58,7 +72,16 @@ export default function FilterDesigner() {
 
     return (
         <div className="app-container">
-            <OptionsPanel options={options} updateOption={updateOption} />
+            <OptionsPanel 
+            options={options} 
+                updateOption={updateOption}
+                onSave={() => saveToFile({ poles, options })}
+                onLoad={() => loadFromFile(hydrateState)}
+                onCopyLink={() => {
+                    const url = `${window.location.origin}${window.location.pathname}?state=${getURLState({ poles, options })}`;
+                    navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
+                }}
+            />
             <div className="filter-design-panel">
                 <UnitCircle
                     onAddPole={addPole}
