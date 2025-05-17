@@ -9,7 +9,7 @@ import CoeffTable from './CoeffTable';
 import PhasePlot from './PhasePlot';
 import {saveToFile,loadFromFile,getURLState,loadFromURL} from '../utils/stateIO';
 
-let idCounter = 0;
+let idCounter = 1;
 export default function FilterDesigner() {
     const [poles, setPoles] = useState([]);
     const [activeId, setActiveId] = useState(null);
@@ -21,6 +21,7 @@ export default function FilterDesigner() {
         // Apply loaded state
         if (data.poles) setPoles(data.poles);
         if (data.options) setOptions(prev => ({ ...prev, ...data.options }));
+        if (data.idCounter) idCounter = data.idCounter;
     }
     
     const clearAll = () => {
@@ -54,7 +55,15 @@ export default function FilterDesigner() {
     };
 
     const removePole = (id) => {
-        setPoles((prev) => prev.filter((p) => p.id !== id));
+        setPoles((prev) => {
+            const filtered = prev.filter((p) => p.id !== id);
+            const reassigned = filtered.map((p, index) => ({
+                ...p,
+                id: index + 1
+            }));
+            idCounter = 1 + reassigned.length;
+            return reassigned;
+        });
         if (id === activeId) setActiveId(null);
     };
 
@@ -83,10 +92,10 @@ export default function FilterDesigner() {
             <OptionsPanel 
             options={options} 
                 updateOption={updateOption}
-                onSave={() => saveToFile({ poles, options })}
+                onSave={() => saveToFile({ poles, options, idCounter })}
                 onLoad={() => loadFromFile(hydrateState)}
                 onCopyLink={() => {
-                    const url = `${window.location.origin}${window.location.pathname}?state=${getURLState({ poles, options })}`;
+                    const url = `${window.location.origin}${window.location.pathname}?state=${getURLState({ poles, options, idCounter })}`;
                     navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
                 }}
                 onClearAll={clearAll}

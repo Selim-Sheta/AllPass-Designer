@@ -74,6 +74,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
                     zIndex: 1
                 }}
             >
+                {id}
             </div>
             {/* Ghost pole: appears if EnforceRealOutput is on and imag ≠ 0 */}
             {enforceRealOutput && Math.abs(imagValue) > 1e-6 && (
@@ -88,7 +89,9 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
                         cursor: 'not-allowed',
                         zIndex: 0 // explicitly behind
                     }}
-                />
+                >
+                    {id}
+                </div>
             )}
         </>
     );

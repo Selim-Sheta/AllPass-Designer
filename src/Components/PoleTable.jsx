@@ -35,11 +35,12 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
 
     function renderPoleRow(pole, isGhost = false) {
         const { id, pos } = pole;
-        const displayId = isGhost ? `${id}*` : id;
+        const displayId = `${id}`;
         const readOnly = isGhost;
 
-        const makeInput = (value, onChangeFn, step = '0.01', min = '-1', max = '1') => (
+        const makeInput = (value, onChangeFn, step = '0.01', min = '-1', max = '1', key) => (
             <input
+                key = {key}
                 className="table-cell"
                 type="number"
                 step={step}
@@ -60,21 +61,21 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
         let inputs;
         if (coordSystem === 'rect') {
             inputs = [
-                makeInput(pos.real.toFixed(4), val => onUserInput(id, val, pos.imag)), // real
-                makeInput(pos.imag.toFixed(4), val => onUserInput(id, pos.real, val)), // imag
+                makeInput(pos.real.toFixed(4), val => onUserInput(id, val, pos.imag), '0.01', '0', '1', `${id}-real`), // real
+                makeInput(pos.imag.toFixed(4), val => onUserInput(id, pos.real, val), '0.01', '0', '1', `${id}-imag`), // imag
             ];
         } else {
             const mag = Math.sqrt(pos.real ** 2 + pos.imag ** 2);
             const angle = Math.atan2(pos.imag, pos.real) * (180 / Math.PI);
             inputs = [
-                makeInput(mag.toFixed(4), val => onUserInput(id, val, angle), '0.01', '0', '1'), // mag
-                makeInput(angle.toFixed(2), val => onUserInput(id, mag, val), '0.1', '-180', '180'), // angle
+                makeInput(mag.toFixed(4), val => onUserInput(id, val, angle), '0.01', '0', '1', `${id}-mag`), // mag
+                makeInput(angle.toFixed(2), val => onUserInput(id, mag, val), '0.1', '-180', '180', `${id}-angle`), // angle
             ];
         }
 
         return (
-            <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className={`table-row${isGhost ? ' ghost' : ''}`}>
-                <span className="table-cell">{displayId}</span>
+            <div key={`${id}-${isGhost ? 'ghost' : 'real'}`}  className={`table-row${isGhost ? ' ghost' : ''}`}>
+                <span className={`table-cell${isGhost ? ' ghost' : ''}`}>{displayId}</span>
                 {inputs}
                 {!readOnly ? <button className="icon-button small" onClick={() => onDelete(id)}>X</button> : <span></span>}
             </div>

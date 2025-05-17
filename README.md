@@ -48,6 +48,9 @@ npm run dev
 - Auto-save state in URL
 - Lock pole components
 - Listen to result in real-time
+- Fit to reference
+- Export as Biquads
+- Stereo Design Mode
 
 ## ⚖️ License
 Licensed under the Polyform Noncommercial License 1.0.0. See LICENSE file for details.

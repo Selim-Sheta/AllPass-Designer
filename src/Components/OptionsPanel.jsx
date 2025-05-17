@@ -2,7 +2,7 @@
 
 // This component is responsible for global settings.
 import React from 'react';
-import { Switch, FormControlLabel, FormGroup, Tooltip, IconButton } from '@mui/material';
+import { Switch, FormControlLabel, FormGroup, Tooltip} from '@mui/material';
 import { LuClipboardCopy, LuClipboardCheck, LuDownload, LuFolderOpen, LuSave, LuShare2 } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
