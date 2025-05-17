@@ -4,7 +4,6 @@
 import { OutlinedInput } from '@mui/material';
 import React from 'react';
 import { LuCirclePlus } from "react-icons/lu";
-import { RiDeleteBin6Line } from "react-icons/ri";
 
 export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem, enforceRealOutput }) {
 
@@ -151,11 +150,7 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
 
     return (
         <div className = "table-container">
-            <div className="download-buttons">
-                <button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus/></button>
-                <button title="Clear all" className="icon-button" onClick={addPole}><RiDeleteBin6Line/></button>
-            </div>
-            
+            <button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus/></button>
             <div className="scrollable-table">
                 {poles.flatMap((p) => {
                     const rows = [renderPoleRow(p, false)];

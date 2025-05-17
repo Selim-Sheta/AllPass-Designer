@@ -87,6 +87,7 @@ select,
     height: 100%;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .pole-handle{
@@ -153,4 +154,33 @@ select,
 
 body.dark .text-button:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button {
+    background: var(--neutral);
+    border: none;
+    color: var(--text);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+    margin: 10px;
+    width: 36px;
+    height: 36px;
+}
+
+.icon-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark .icon-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button svg {
+    width: 20px;
+    height: 20px;
 }

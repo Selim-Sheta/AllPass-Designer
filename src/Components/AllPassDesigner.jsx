@@ -16,7 +16,7 @@ export default function FilterDesigner() {
     const [activeId, setActiveId] = useState(null);
     const [unitRadius, setUnitRadius] = useState(null);
 
-    //Apply loaded state
+    // Apply loaded state
     function hydrateState(data) {
         if (data.poles) setPoles(data.poles);
         if (data.options) setOptions(prev => ({ ...prev, ...data.options }));
@@ -27,6 +27,12 @@ export default function FilterDesigner() {
         const state = loadFromURL();
         if (state) hydrateState(state);
     }, []);
+
+    // Clears state and resets URL
+    const clearAll = () => {
+        const baseURL = window.location.origin + window.location.pathname;
+        window.location.assign(baseURL); // full reload, clears state & URL
+    }
 
     // HANDLERS FOR POLE MANAGEMENT
     const addPole = (pixelPos) => {
@@ -81,6 +87,7 @@ export default function FilterDesigner() {
                     const url = `${window.location.origin}${window.location.pathname}?state=${getURLState({ poles, options })}`;
                     navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'));
                 }}
+                onClearAll={clearAll}
             />
             <div className="filter-design-panel">
                 <UnitCircle
@@ -104,6 +111,7 @@ export default function FilterDesigner() {
                                 updatePole(id, { real, imag });
                             }}
                             onDragEnd={() => setActiveId(null)}
+                            onDelete={removePole}
                             diameter={30}
                             enforceRealOutput={options.enforceRealOutput}
                             imagValue={p.pos.imag}

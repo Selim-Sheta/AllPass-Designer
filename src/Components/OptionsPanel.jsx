@@ -4,8 +4,9 @@
 import React from 'react';
 import { Switch, FormControlLabel, FormGroup, Tooltip, IconButton } from '@mui/material';
 import { LuClipboardCopy, LuClipboardCheck, LuDownload, LuFolderOpen, LuSave, LuShare2 } from "react-icons/lu";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
-export default function OptionsPanel({ options, updateOption, onSave, onLoad, onCopyLink }) {
+export default function OptionsPanel({ options, updateOption, onSave, onLoad, onCopyLink, onClearAll }) {
     return (
         <div className="options-panel">
             <div className="state-toolbar">
@@ -48,6 +49,7 @@ export default function OptionsPanel({ options, updateOption, onSave, onLoad, on
                     />
                 </Tooltip>
             </FormGroup>
+            <button title="Clear all" className="icon-button" onClick={onClearAll}><RiDeleteBin6Line/></button>
         </div>
     );
 }

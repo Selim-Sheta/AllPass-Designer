@@ -3,7 +3,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, diameter = 30, enforceRealOutput, imagValue}) 
+export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, onDelete, diameter = 30, enforceRealOutput, imagValue}) 
 {
     const ref = useRef(null);
     const [localRadius, setLocalRadius] = useState(diameter / 2);
@@ -53,7 +53,11 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
 
     const handleMouseDown = (e) => {
         e.stopPropagation();
-        onDragStart(id);
+        if (e.shiftKey) {
+            onDelete(id); // delete on shift-click
+        } else {
+            onDragStart(id);
+        }
     };
 
     return (
