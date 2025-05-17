@@ -1,3 +1,5 @@
+// S. Sheta 2025
+
 import React from 'react';
 
 export default function GridBackground({ width, height, coordSystem, radius }) {

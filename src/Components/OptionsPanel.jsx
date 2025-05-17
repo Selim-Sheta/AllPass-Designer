@@ -1,6 +1,6 @@
 // S. Sheta 2025
-// This component is responsible for global settings.
 
+// This component is responsible for global settings.
 import React from 'react';
 import { Switch, FormControlLabel, FormGroup, Tooltip, IconButton } from '@mui/material';
 import { LuClipboardCopy, LuClipboardCheck, LuDownload, LuFolderOpen, LuSave, LuShare2 } from "react-icons/lu";

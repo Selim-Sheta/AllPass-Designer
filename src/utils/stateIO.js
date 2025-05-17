@@ -1,3 +1,4 @@
+// S. Sheta 2025
 import LZString from 'lz-string';
 
 export function saveToFile(state) {

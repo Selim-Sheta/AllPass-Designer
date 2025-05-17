@@ -4,6 +4,7 @@
 import React, {useMemo, useState} from 'react';
 import Complex from 'complex.js';
 import { calculateFeedbackCoefficients, extractRealImaginary } from '../utils/dsp';
+
 export default function PoleTable({ poles, enforceRealOutput }) {
     const [copied, setCopied] = useState(false);
 
@@ -64,7 +65,7 @@ export default function PoleTable({ poles, enforceRealOutput }) {
             </div>
             <div id="coeffs-table" className="scrollable-table">
             <div className='table-row table-headers'>
-                <span className='table-cell'>Delay (t)</span>
+                <span className='table-cell'>Delay</span>
                 <span className='table-cell'>Feedforward</span>
                 <span className='table-cell'>Feedback</span>
             </div>
