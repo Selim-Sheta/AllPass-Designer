@@ -8,9 +8,9 @@ To do:
 - Plot: Drop-down: phase, phase delay, group delay
 - ID on poles
 - Improve annoying inputs in table
-- Better Default Options
 - Auto-save state in URL
 - Lock pole components
+- Audition
 
 Bugs:
 - Duplicate keys in some edge cases
@@ -25,3 +25,4 @@ Done/Fixed
 - Download/copy coefficients
 - Save/Load file
 - Clear All
+- Better Default Options

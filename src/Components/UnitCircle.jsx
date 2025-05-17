@@ -76,19 +76,21 @@ export default function UnitCircle({ children, onAddPole, onStartImmediateDrag, 
 
 
     return (
-        <div
-            ref={ref}
-            className="unit-circle"
-            onMouseDown={handleMouseDown}
-        >
-            <GridBackground
-                width={radius * 2}
-                height={radius * 2}
-                coordSystem={coordSystem}
-                radius={radius}
-            />
-            {children}
-            <div className="origin-marker" />
+        <div className='filter-design-element'>
+            <div
+                ref={ref}
+                className="unit-circle"
+                onMouseDown={handleMouseDown}
+            >
+                <GridBackground
+                    width={radius * 2}
+                    height={radius * 2}
+                    coordSystem={coordSystem}
+                    radius={radius}
+                />
+                {children}
+                <div className="origin-marker" />
+            </div>
         </div>
     );
 }

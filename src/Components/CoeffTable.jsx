@@ -57,12 +57,12 @@ export default function PoleTable({ poles, enforceRealOutput }) {
     }
 
     return (
-        <div className="table-container">
+        <div className="filter-design-element">
             <div className="download-buttons">
                 <button title="Download coefficients as a txt file." className='text-button' onClick={triggerDownload}>Download</button>
                 <button title="Copy coefficients to clipboard." className='text-button' onClick={triggerCopy}>{copied ? 'Copied!' : 'Copy'}</button>
             </div>
-            <div className="scrollable-table">
+            <div id="coeffs-table" className="scrollable-table">
             <div className='table-row table-headers'>
                 <span className='table-cell'>Delay (t)</span>
                 <span className='table-cell'>Feedforward</span>

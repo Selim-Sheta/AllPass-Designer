@@ -1,13 +1,12 @@
 // S. Sheta 2025
 // Editable table component for pole data
 
-import { OutlinedInput } from '@mui/material';
 import React from 'react';
 import { LuCirclePlus } from "react-icons/lu";
 
 export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem, enforceRealOutput }) {
 
-    const addPole = () =>{
+    const addPole = () => {
         onAdd({ x: 0, y: 0 });
     }
 
@@ -39,125 +38,71 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
         const displayId = isGhost ? `${id}*` : id;
         const readOnly = isGhost;
 
+        const makeInput = (value, onChangeFn, step = '0.01', min = '-1', max = '1') => (
+            <input
+                className="table-cell"
+                type="number"
+                step={step}
+                value={value}
+                min={min}
+                max={max}
+                readOnly={readOnly}
+                onChange={(e) => !readOnly && onChangeFn(parseFloat(e.target.value))}
+                onBlur={(e) => !readOnly && onChangeFn(parseFloat(e.target.value))}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !readOnly) {
+                        onChangeFn(parseFloat(e.target.value));
+                    }
+                }}
+            />
+        );
+
+        let inputs;
         if (coordSystem === 'rect') {
-            return (
-                <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className="table-row ghost-row">
-                    <span  className='table-cell'>ID: {displayId}</span>
-                    <span  className='table-cell'>
-                        Real:
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={parseFloat(pos.real.toFixed(4))}
-                            min="-1"
-                            max="1"
-                            readOnly={readOnly}
-                            onChange={(e) =>
-                                !readOnly && onUserInput(id, parseFloat(e.target.value), pos.imag)
-                            }
-                            onBlur={(e) =>
-                                !readOnly && onUserInput(id, parseFloat(e.target.value), pos.imag)
-                            }
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !readOnly) {
-                                    onUserInput(id, parseFloat(e.target.value), pos.imag);
-                                }
-                            }}
-                        />
-                    </span>
-                    <span  className='table-cell'>
-                        Imag:
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={parseFloat(pos.imag.toFixed(4))}
-                            min="-1"
-                            max="1"
-                            readOnly={readOnly}
-                            onChange={(e) =>
-                                !readOnly && onUserInput(id, pos.real, parseFloat(e.target.value))
-                            }
-                            onBlur={(e) =>
-                                !readOnly && onUserInput(id, pos.real, parseFloat(e.target.value))
-                            }
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !readOnly) {
-                                    onUserInput(id, pos.real, parseFloat(e.target.value));
-                                }
-                            }}
-                        />
-                    </span>
-                    {!readOnly && <button onClick={() => onDelete(id)}>X</button>}
-                </div>
-            );
+            inputs = [
+                makeInput(pos.real.toFixed(4), val => onUserInput(id, val, pos.imag)), // real
+                makeInput(pos.imag.toFixed(4), val => onUserInput(id, pos.real, val)), // imag
+            ];
+        } else {
+            const mag = Math.sqrt(pos.real ** 2 + pos.imag ** 2);
+            const angle = Math.atan2(pos.imag, pos.real) * (180 / Math.PI);
+            inputs = [
+                makeInput(mag.toFixed(4), val => onUserInput(id, val, angle), '0.01', '0', '1'), // mag
+                makeInput(angle.toFixed(2), val => onUserInput(id, mag, val), '0.1', '-180', '180'), // angle
+            ];
         }
 
-        const mag = Math.sqrt(pos.real ** 2 + pos.imag ** 2);
-        const angle = Math.atan2(pos.imag, pos.real) * (180 / Math.PI);
-
         return (
-            <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className="table-row ghost-row">
-                <span  className='table-cell'>ID: {displayId}</span>
-                <span  className='table-cell'>
-                    Mag:
-                    <input
-                        type="number"
-                        step="0.01"
-                        value={mag.toFixed(4)}
-                        min="0"
-                        max="1"
-                        readOnly={readOnly}
-                        onChange={(e) =>
-                            !readOnly && onUserInput(id, parseFloat(e.target.value), angle)
-                        }
-                        onBlur={(e) =>
-                            !readOnly && onUserInput(id, parseFloat(e.target.value), angle)
-                        }
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !readOnly) {
-                                onUserInput(id, parseFloat(e.target.value), angle);
-                            }
-                        }}
-                    />
-                </span>
-                <span  className='table-cell'>
-                    Angle:
-                    <input
-                        type="number"
-                        step="0.1"
-                        value={angle.toFixed(2)}
-                        min="-180"
-                        max="180"
-                        readOnly={readOnly}
-                        onChange={(e) =>
-                            !readOnly && onUserInput(id, mag, parseFloat(e.target.value))
-                        }
-                        onBlur={(e) =>
-                            !readOnly && onUserInput(id, mag, parseFloat(e.target.value))
-                        }
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !readOnly) {
-                                onUserInput(id, mag, parseFloat(e.target.value));
-                            }
-                        }}
-                    />
-                </span>
-                {!readOnly && <button onClick={() => onDelete(id)}>X</button>}
+            <div key={`${id}-${isGhost ? 'ghost' : 'real'}`} className={`table-row${isGhost ? ' ghost' : ''}`}>
+                <span className="table-cell">{displayId}</span>
+                {inputs}
+                {!readOnly ? <button className="icon-button small" onClick={() => onDelete(id)}>X</button> : <span></span>}
             </div>
         );
     }
 
-
     return (
-        <div className = "table-container">
-            <button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus/></button>
-            <div className="scrollable-table">
+        <div className="filter-design-element">
+            <button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus /></button>
+            <div id="poles-table" className="scrollable-table">
+                <div className="table-row table-headers">
+                    {coordSystem === 'rect' ? (
+                        <>
+                            <span className="table-cell">ID</span>
+                            <span className="table-cell">Real</span>
+                            <span className="table-cell">Imag</span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="table-cell">ID</span>
+                            <span className="table-cell">Mag</span>
+                            <span className="table-cell">Angle</span>
+                        </>
+                    )}
+                </div>
                 {poles.flatMap((p) => {
                     const rows = [renderPoleRow(p, false)];
-                    if (
-                        enforceRealOutput &&
-                        Math.abs(p.pos.imag) > 1e-6
-                    ) {
+                    if (enforceRealOutput && Math.abs(p.pos.imag) > 1e-6) {
                         const ghost = {
                             ...p,
                             pos: {

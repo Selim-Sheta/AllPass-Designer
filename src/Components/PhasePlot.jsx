@@ -29,11 +29,11 @@ export default function PhasePlot({ poles, logScale = false, enforceRealOutput }
 
     const layout = useMemo(() => ({
         margin: { t: 20, r: 10, b: 40, l: 50 },
+
         xaxis: {
             title: 'Normalized Frequency (rads)',
             type: logScale ? 'log' : 'linear',
             range: logScale ? [0.01, Math.PI] : [0, Math.PI],
-            
         },
         yaxis: {
             title: 'Phase (radians)',
@@ -48,7 +48,7 @@ export default function PhasePlot({ poles, logScale = false, enforceRealOutput }
     }
 
     return (
-        <div className="phase-plot">
+        <div className="filter-design-element plot">
             <Plot
                 data={[
                     {
@@ -56,7 +56,7 @@ export default function PhasePlot({ poles, logScale = false, enforceRealOutput }
                         y: phase,
                         type: 'scatter',
                         mode: 'lines',
-                        line: { color: 'blue' }
+                        line: { color: '#1bce9e' }
                     }
                 ]}
                 layout={layout}
