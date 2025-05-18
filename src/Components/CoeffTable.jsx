@@ -1,11 +1,11 @@
 // S. Sheta 2025
 // Compute and display the coefficients of the all-pass filter
 
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import Complex from 'complex.js';
-import { calculateFeedbackCoefficients, extractRealImaginary } from '../utils/dsp';
+import { calculateFeedbackCoefficients } from '../utils/dsp';
 
-export default function PoleTable({ poles, enforceRealOutput }) {
+export default function CoeffTable({ poles, enforceRealOutput }) {
     const [copied, setCopied] = useState(false);
 
     const { feedbackCoefficients, feedforwardCoefficients } = useMemo(() => {
@@ -17,12 +17,10 @@ export default function PoleTable({ poles, enforceRealOutput }) {
                 .map(p => new Complex(p.re, -p.im));
             complexPoles.push(...conjugates);
         }
-        const feedbackCoefficients = calculateFeedbackCoefficients(complexPoles);
-        const feedforwardCoefficients = feedbackCoefficients
-            .map(c => c.conjugate())
-            .reverse();
 
-        return { feedbackCoefficients, feedforwardCoefficients };
+        const feedback = calculateFeedbackCoefficients(complexPoles);
+        const feedforward = feedback.map(c => c.conjugate()).reverse();
+        return { feedbackCoefficients: feedback, feedforwardCoefficients: feedforward };
     }, [poles, enforceRealOutput]);
 
     const formatForDisplay = c => enforceRealOutput ? c.re.toFixed(6) : `${c.re.toFixed(6)} + ${c.im.toFixed(6)}i`;
@@ -49,7 +47,7 @@ export default function PoleTable({ poles, enforceRealOutput }) {
         const feedforwardText = 'feedforward coefficients: ' + feedforwardCoefficients.map(formatForDownload).join(', ');
         const feedbackText = 'feedback coefficients: ' + feedbackCoefficients.map(formatForDownload).join(', ');
         const text = `${feedforwardText}\n${feedbackText}`;
-        navigator.clipboard.writeText(text).then(() => {
+        navigator.clipboard?.writeText(text).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 500); // reset after 0.5 sec
         }).catch((err) => {
@@ -59,25 +57,24 @@ export default function PoleTable({ poles, enforceRealOutput }) {
 
     return (
         <div className="filter-design-element">
-            <div className="download-buttons">
+            <div className="btn-row">
                 <button title="Download coefficients as a txt file." className='text-button' onClick={triggerDownload}>Download</button>
                 <button title="Copy coefficients to clipboard." className='text-button' onClick={triggerCopy}>{copied ? 'Copied!' : 'Copy'}</button>
             </div>
             <div id="coeffs-table" className="scrollable-table">
-            <div className='table-row table-headers'>
-                <span className='table-cell'>Delay</span>
-                <span className='table-cell'>Feedforward</span>
-                <span className='table-cell'>Feedback</span>
-            </div>
-            {feedbackCoefficients.map((fb, i) => (
-                <div className='table-row' key={i}>
-                    <span className='table-cell'>{i}</span>
-                    <span className='table-cell'>{formatForDisplay(feedforwardCoefficients[i])}</span>
-                    <span className='table-cell'>{formatForDisplay(fb)}</span>
+                <div className='table-row table-headers'>
+                    <span className='table-cell first-col'>Delay</span>
+                    <span className='table-cell'>Feedforward</span>
+                    <span className='table-cell'>Feedback</span>
                 </div>
-            ))}
+                {feedbackCoefficients.map((fb, i) => (
+                    <div className='table-row' key={i}>
+                        <span className='table-cell first-col'>{i}</span>
+                        <span className='table-cell'>{formatForDisplay(feedforwardCoefficients[i])}</span>
+                        <span className='table-cell'>{formatForDisplay(fb)}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );
 }
-     

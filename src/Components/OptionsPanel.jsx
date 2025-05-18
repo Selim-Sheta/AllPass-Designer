@@ -1,11 +1,12 @@
 // S. Sheta 2025
 
-// This component is responsible for global settings.
+// App-wide settings panel: controls display mode, coordinate system, and conjugate pairing
 import React from 'react';
-import { Switch, FormControlLabel, FormGroup, Tooltip} from '@mui/material';
-import { LuClipboardCopy, LuClipboardCheck, LuDownload, LuFolderOpen, LuSave, LuShare2 } from "react-icons/lu";
+import { Switch, FormControlLabel, FormGroup, Tooltip } from '@mui/material';
+import { LuSave, LuFolderOpen, LuShare2 } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
+// Individual switch with a tooltip wrapper
 function ThemedSwitch({ label, tooltip, checked, onChange }) {
     return (
         <Tooltip title={tooltip}>
@@ -14,6 +15,11 @@ function ThemedSwitch({ label, tooltip, checked, onChange }) {
                     <Switch
                         checked={checked}
                         onChange={onChange}
+                        slotProps={{
+                            input: {
+                                'aria-label': label
+                            }
+                        }}
                     />
                 }
                 label={label}
@@ -25,14 +31,14 @@ function ThemedSwitch({ label, tooltip, checked, onChange }) {
 export default function OptionsPanel({ options, updateOption, onSave, onLoad, onCopyLink, onClearAll }) {
     return (
         <div className="options-panel">
-            <div className="state-toolbar">
-                <button title="save" className="icon-button" onClick={onSave}><LuSave/></button>
-                <button title="open" className="icon-button" onClick={onLoad}><LuFolderOpen/></button>
-                <button title="share" className="icon-button" onClick={onCopyLink}><LuShare2/></button>
+            <div className="btn-row">
+                <button title="Save to file" className="icon-button" onClick={onSave}><LuSave /></button>
+                <button title="Open from file" className="icon-button" onClick={onLoad}><LuFolderOpen /></button>
+                <button title="share via link" className="icon-button" onClick={onCopyLink}><LuShare2 /></button>
             </div>
             <FormGroup row>
                 <ThemedSwitch
-                    label="Enforce Real Output"
+                    label="Enforce Real"
                     tooltip="Automatically pair complex poles with a conjugate twin"
                     checked={options.enforceRealOutput}
                     onChange={(e) => updateOption('enforceRealOutput', e.target.checked)}
@@ -50,7 +56,7 @@ export default function OptionsPanel({ options, updateOption, onSave, onLoad, on
                     onChange={(e) => updateOption('displayTheme', e.target.checked ? 'dark' : 'light')}
                 />
             </FormGroup>
-            <button title="Clear all" className="icon-button" onClick={onClearAll}><RiDeleteBin6Line/></button>
+            <button title="Clear current design" className="icon-button" onClick={onClearAll}><RiDeleteBin6Line /></button>
         </div>
     );
 }

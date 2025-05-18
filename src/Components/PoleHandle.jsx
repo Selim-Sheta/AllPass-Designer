@@ -1,27 +1,20 @@
 // S. Sheta 2025
-// A single pole handle component.
+// A draggable complex pole representation, with optional ghost rendering for conjugates
 
 import React, { useRef, useEffect, useState } from 'react';
 
 export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onDrag, onDragEnd, onDelete, diameter = 30, enforceRealOutput, imagValue}) 
 {
     const ref = useRef(null);
-    const [localRadius, setLocalRadius] = useState(diameter / 2);
-
-    useEffect(() => {
-        if (ref.current) {
-            const rect = ref.current.getBoundingClientRect();
-            setLocalRadius(rect.width / 2);
-        }
-    }, []);
+    const localRadius = diameter / 2;
  
     useEffect(() => {
         if (!isActive) return;
 
         const handleMouseMove = (e) => {
-            if (!ref.current) return;
+            const parentRect = ref.current?.parentElement?.getBoundingClientRect();
+            if (!parentRect) return;
 
-            const parentRect = ref.current.parentElement.getBoundingClientRect();
             const center = {
                 x: parentRect.left + parentRect.width / 2,
                 y: parentRect.top + parentRect.height / 2
@@ -29,9 +22,8 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
 
             const dx = e.clientX - center.x;
             const dy = e.clientY - center.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
             const angle = Math.atan2(dy, dx);
-            const clamped = Math.min(distance, radius);
+            const clamped = Math.min(Math.hypot(dx, dy), radius); // stay inside unit circle
 
             onDrag(id, {
                 x: clamped * Math.cos(angle),
@@ -65,7 +57,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
             <div
                 ref={ref}
                 onMouseDown={handleMouseDown}
-                className='pole-handle'
+                className={`pole-handle${isActive ? ' active' : ''}`}
                 style={{
                     transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
                     width: `${diameter}px`,
@@ -76,7 +68,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
             >
                 {id}
             </div>
-            {/* Ghost pole: appears if EnforceRealOutput is on and imag ≠ 0 */}
+            {/* Render conjugate ghost only if imaginary part is significant */}
             {enforceRealOutput && Math.abs(imagValue) > 1e-6 && (
                 <div
                     onMouseDown={(e) => e.stopPropagation()}
@@ -87,7 +79,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
                         height: `${diameter}px`,
                         opacity: Math.min(0.5, Math.max(0.1, Math.abs(imagValue))),
                         cursor: 'not-allowed',
-                        zIndex: 0 // explicitly behind
+                        zIndex: 0
                     }}
                 >
                     {id}
