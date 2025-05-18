@@ -1,64 +1,117 @@
 // S. Sheta 2025
+// Displays a frequency-domain plot of phase, phase delay, or group delay
+
 import React, { useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import Complex from 'complex.js';
-import { calculateAllPassFrequencyResponse, calculatePhaseDelay, getPhase, unwrapPhase } from '../utils/dsp';
+import {
+    calculateAllPassFrequencyResponse,
+    calculatePhaseDelay,
+    calculateGroupDelay,
+    getPhase,
+    unwrapPhase
+} from '../utils/dsp';
 
-export default function PhasePlot({ poles, logScale = false, enforceRealOutput }) {
-    // Frequencies from 0 to π (normalized angular frequency)
-    const w = useMemo(() => {
-        const N = 512;
-        return Array.from({ length: N }, (_, i) => (Math.PI * i) / (N - 1));
-    }, []);
+const RESOLUTION = 512;
+const LINE_STYLE = { color: '#1bce9e' };
 
-    const phase = useMemo(() => {
+export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOptions }) {
+    const w = useMemo(() => (
+        Array.from({ length: RESOLUTION }, (_, i) => (Math.PI * i) / (RESOLUTION - 1))
+    ), []);
+
+    const plotData = useMemo(() => {
         const complexPoles = poles.map(p => new Complex(p.pos.real, p.pos.imag));
-        // For every non-real pole, add its conjugate to the list
         if (enforceRealOutput) {
             const conjugates = complexPoles
                 .filter(p => p.im !== 0)
                 .map(p => new Complex(p.re, -p.im));
             complexPoles.push(...conjugates);
         }
+
         const H = calculateAllPassFrequencyResponse(w, complexPoles);
-        const phase = getPhase(H);
-        const unwrappedPhase = unwrapPhase(phase);
-        const phaseDelay = calculatePhaseDelay(unwrappedPhase, w);
-        return phaseDelay;
-    }, [w, poles, enforceRealOutput]);
+        const rawPhase = getPhase(H);
+        const unwrappedPhase = unwrapPhase(rawPhase);
 
-    const layout = useMemo(() => ({
-        margin: { t: 20, r: 10, b: 40, l: 50 },
+        let y;
+        switch (plotOptions.display) {
+            case 'group-delay':
+                y = calculateGroupDelay(unwrappedPhase, w);
+                break;
+            case 'phase-delay':
+                y = calculatePhaseDelay(unwrappedPhase, w);
+                break;
+            case 'phase':
+            default:
+                y = unwrappedPhase;
+        }
 
-        xaxis: {
-            title: 'Normalized Frequency (rads)',
-            type: logScale ? 'log' : 'linear',
-            range: logScale ? [0.01, Math.PI] : [0, Math.PI],
-        },
-        yaxis: {
-            title: 'Phase (radians)',
-            range: [-Math.PI, Math.PI],
-            autorange: true
-        },
-    }), [logScale]);
+        // Apply y-axis unit conversion
+        if (plotOptions.display === 'phase') {
+            if (plotOptions.yUnits === 'degrees') {
+                y = y.map(v => v * (180 / Math.PI));
+            }
+        } else if (plotOptions.yUnits === 'seconds') {
+            y = y.map(v => v / sampleRate);
+        }
+
+        // Compute x-axis
+        const x = plotOptions.xUnits === 'hz'
+            ? w.map(w => (w * sampleRate) / (2 * Math.PI))
+            : w;
+
+        return [{
+            x,
+            y,
+            type: 'scatter',
+            mode: 'lines',
+            line: LINE_STYLE
+        }];
+    }, [w, poles, enforceRealOutput, plotOptions, sampleRate]);
+
+    const layout = useMemo(() => {
+        const xTitle = plotOptions.xUnits === 'hz'
+            ? 'Frequency (Hz)'
+            : 'Frequency (rad/sample)';
+
+        let yTitle = '';
+        if (plotOptions.display === 'phase') {
+            yTitle = `Phase (${plotOptions.yUnits === 'degrees' ? 'degrees' : 'radians'})`;
+        } else if (plotOptions.display === 'group-delay') {
+            yTitle = `Group Delay (${plotOptions.yUnits === 'seconds' ? 's' : 'samples'})`;
+        } else {
+            yTitle = `Phase Delay (${plotOptions.yUnits === 'seconds' ? 's' : 'samples'})`;
+        }
+
+        const xRange = [plotOptions.logScale ? 0.01 : 1.0, plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI]
+
+        return {
+            margin: { t: 20, r: 10, b: 40, l: 50 },
+            height: 350,
+            xaxis: {
+                title: xTitle,
+                type: plotOptions.logScale ? 'log' : 'linear',
+                range: xRange
+            },
+            yaxis: {
+                title: yTitle,
+                autorange: true
+            },
+            modebar: { orientation: 'v' }
+        };
+    }, [plotOptions, sampleRate]);
 
     const config = {
         responsive: false,
-        displaylogo: false,
-    }
+        displaylogo: false
+    };
 
     return (
         <div className="filter-design-element plot">
+            {/* UI controls to be added here */}
+            <div className="btn-row" />
             <Plot
-                data={[
-                    {
-                        x: w,
-                        y: phase,
-                        type: 'scatter',
-                        mode: 'lines',
-                        line: { color: '#1bce9e' }
-                    }
-                ]}
+                data={plotData}
                 layout={layout}
                 config={config}
             />
