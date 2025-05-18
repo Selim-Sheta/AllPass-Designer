@@ -50,6 +50,9 @@ npm run dev
 - Stereo Design Mode
 - Lock pole components
 - Fit to reference
+- Minimal View with only key info
+- Spectrum view & input mode for poles
+- Undo/Redo
 
 ## ⚖️ License
 Licensed under the Polyform Noncommercial License 1.0.0. See LICENSE file for details.

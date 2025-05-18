@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-    --background: #f7fdff;
+    --background: #f7fbff;
     --background2: #ffffff;
     --text: #04131e;
     --primary: #1bce9e;
@@ -24,8 +24,8 @@ body,
 
 /* Dark theme overrides */
 body.dark {
-    --background: #04131e;
-    --background2: #000000;
+    --background:  #000000;
+    --background2:#04131e;
     --text: #ffffff;
     --neutral: #5c6071;
 }
@@ -151,6 +151,42 @@ select,
     width:100%;
 }
 
+.js-plotly-plot {
+    background-color: var(--background2);
+    border-radius: 15px;
+    color: var(--text) !important;
+}
+
+.js-plotly-plot .modebar-container{
+    top: 10px !important;
+    right: 10px !important;
+}
+
+.js-plotly-plot .main-svg{
+    background: #002aff00 !important;
+}
+
+.js-plotly-plot .modebar-group{
+    background: #002aff00 !important;
+}
+
+.js-plotly-plot .modebar-btn path{
+    fill: var(--text) !important;
+}
+
+.js-plotly-plot .modebar-btn:hover path{
+    fill: var(--secondary) !important;
+}
+
+.js-plotly-plot .gridlayer path{
+    stroke: var(--neutral) !important;
+}
+
+.js-plotly-plot text{
+    color: var(--text) !important;
+    fill: var(--text) !important;
+}
+
 .unit-circle {
     height: 80%;
     aspect-ratio: 1 / 1;
@@ -160,6 +196,7 @@ select,
     cursor: pointer;
     margin: auto;
     object-fit: contain;
+    background-color: var(--background2);
 }
 
 .pole-handle {
@@ -176,6 +213,10 @@ select,
     font-weight: 600;
     color: #ffffff;
     padding-top: 4px;
+}
+
+.pole-handle.active{
+    background-color: var(--primary);
 }
 
 .pole-handle.ghost {
@@ -200,6 +241,9 @@ select,
     max-height: 100%;
     width: 100%;
     overflow-y: auto;     
+    border-radius: 15px;
+    background-color: var(--background2);
+    padding: 10px;
 }
 
 .table-row {
@@ -207,12 +251,21 @@ select,
     grid-template-columns: 2fr 2fr 2fr;
     align-items: center;
     gap: 8px;
-    padding: 4px 0;
+    border-top: 1px solid var(--neutral);
+}
+
+.table-row.table-headers{
+    border: none;
+}
+
+.table-row.table-headers.table-cell{
+    border: none;
 }
 
 .table-row.ghost {
     color: var(--neutral);
     padding: 0px;
+    border-top: none;
 }
 
 #poles-table .table-row {
@@ -229,10 +282,15 @@ select,
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: center;
+    border-left: 1px solid var(--neutral);
 }
 
 .table-cell.ghost{
     text-decoration: overline;
+}
+
+.table-cell.first-col{
+    border-left: none;
 }
 
 .text-button {
