@@ -22,8 +22,8 @@ export default function FilterDesigner() {
         plotOptions: {
             display: 'phase-delay',
             logScale: false,
-            xUnits: 'rads-per-sample',
-            yUnits: 'rads'
+            xUnits: 'hz',
+            yUnits: 'samples'
         },
         sampleRate: 48000
     });

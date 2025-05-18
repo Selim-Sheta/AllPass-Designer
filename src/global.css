@@ -8,6 +8,7 @@
     --secondary: #8090ed;
     --accent: #8152e7;
     --neutral: #babed6;
+    --transparent-grey: rgba(0, 0, 0, 0.1);
 }
 
 html,
@@ -28,6 +29,7 @@ body.dark {
     --background2:#04131e;
     --text: #ffffff;
     --neutral: #5c6071;
+    --transparent-grey: rgba(255, 255, 255, 0.2);
 }
 
 * {
@@ -337,11 +339,7 @@ body.dark .text-button:hover {
 }
 
 .icon-button:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark .icon-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--transparent-grey);
 }
 
 .icon-button svg {
@@ -366,4 +364,46 @@ body.dark .icon-button:hover {
 
 body.dark .MuiSwitch-track {
   background-color: #e5e9ff !important;
+}
+
+.plot .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 10px;
+}
+
+.plot .btn-row label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: var(--text);
+    gap: 4px;
+}
+
+.plot .btn-row select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: var(--neutral);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border 0.2s ease;
+}
+
+.plot .btn-row select:hover,
+.plot .btn-row select:focus {
+    background: var(--transparent-grey);
+}
+
+body.dark .plot .btn-row select:hover,
+body.dark .plot .btn-row select:focus {
+    background: #333333;
+}
+
+.plot .btn-row input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
 }

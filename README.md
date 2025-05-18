@@ -40,9 +40,6 @@ npm run dev
 
 ## 📋 To Do List
 - Improve styling and UI
-- Plot: frequency axis with editable nyquist, Phase in degrees
-- Plot: log toggle
-- Plot: Drop-down to select between phase, phase delay, group delay
 - Improve annoying inputs in table
 
 - Listen to result in real-time
