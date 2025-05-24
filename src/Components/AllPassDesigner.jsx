@@ -156,16 +156,6 @@ export default function FilterDesigner() {
                         ))}
                     </UnitCircle>
                 </div>
-                <div className="pole-table-container">
-                    <PoleTable
-                        poles={poles}
-                        onAdd={addPole}
-                        onEdit={updatePole}
-                        onDelete={removePole}
-                        coordSystem={options.coordSystem}
-                        enforceRealOutput={options.enforceRealOutput}
-                    />
-                </div>
                 <div className="phase-plot-container">
                     <PhasePlot
                         poles={poles}
@@ -175,7 +165,15 @@ export default function FilterDesigner() {
                         updatePlotOptions={updatePlotOptions}
                     />
                 </div>
-                <div className='coeff-table-container'>
+                <div className="tables-container">
+                    <PoleTable
+                        poles={poles}
+                        onAdd={addPole}
+                        onEdit={updatePole}
+                        onDelete={removePole}
+                        coordSystem={options.coordSystem}
+                        enforceRealOutput={options.enforceRealOutput}
+                    />
                     <CoeffTable
                         poles={poles}
                         enforceRealOutput={options.enforceRealOutput}

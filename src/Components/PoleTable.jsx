@@ -105,14 +105,13 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
             >
                 <span className={`table-cell${isGhost ? ' ghost' : ''} first-col`}>{id}</span>
                 {inputs}
-                {!readOnly ? (<button className="icon-button small table-cell" onClick={() => onDelete(id)}>X</button>) : <span/>}
+                {!readOnly ? (<button className="icon-button small table-cell" onClick={() => onDelete(id)}>×</button>) : <span/>}
             </div>
         );
     }
 
     return (
         <div className="filter-design-element">
-            <button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus /></button>
             <div id="poles-table" className="scrollable-table">
                 <div className="table-row table-headers">
                     {coordSystem === 'rect' ? (
@@ -120,12 +119,14 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
                             <span className="table-cell first-col">ID</span>
                             <span className="table-cell">Real</span>
                             <span className="table-cell">Imag</span>
+                            <button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button>
                         </>
                     ) : (
                         <>
                             <span className="table-cell first-col">ID</span>
                             <span className="table-cell">Mag</span>
                             <span className="table-cell">Angle</span>
+                            <button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button>
                         </>
                     )}
                 </div>

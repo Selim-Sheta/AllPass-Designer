@@ -37,7 +37,7 @@ export default function GridBackground({ width, height, coordSystem, radius }) {
         <>
             {/* Concentric circles */}
             {Array.from({ length: NUM_CIRCLES }, (_, i) => {
-                const r = radius * ((i + 1) / NUM_CIRCLES);
+                const r = radius * ((i + 1) / (NUM_CIRCLES+1));
                 return (
                     <circle
                         key={`circle-${i}`}
@@ -75,7 +75,7 @@ export default function GridBackground({ width, height, coordSystem, radius }) {
             className="unit-circle-grid"
             width={width}
             height={height}
-            style={{ position: 'absolute', top: -3, left: -3, pointerEvents: 'none' }}
+            style={{ position: 'absolute', pointerEvents: 'none' }}
         >
             {coordSystem === 'rect' ? cartesianGrid : polarGrid}
         </svg>

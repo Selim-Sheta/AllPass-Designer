@@ -10,7 +10,7 @@ An interactive web app for designing all-pass filters by directly manipulating p
   Add, move, and delete poles by clicking or dragging within the unit circle.
 
 - **Real-Time Phase Response**  
-  Instantaneous visualization of the phase response (with unwrapped phase delay), updated with every change.
+  Instantaneous visualization of the phase response, phase delay, or group delay, updated with every change.
 
 - **Two-Way Editing**  
   Edit pole positions either visually or numerically in the table (supports both rectangular and polar coordinate systems).
@@ -41,6 +41,7 @@ npm run dev
 ## 📋 To Do List
 - Improve styling and UI
 - Improve annoying inputs in table
+- Editable Sample Rate
 
 - Listen to result in real-time
 - Export as Biquads
