@@ -1,7 +1,7 @@
 // S. Sheta 2025
 // Displays a frequency-domain plot of phase, phase delay, or group delay
 
-import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
+import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
 import Plot from 'react-plotly.js';
 import Complex from 'complex.js';
 import {
@@ -11,6 +11,7 @@ import {
     getPhase,
     unwrapPhase
 } from '../utils/dsp';
+import { Toggle, Selector } from './Interactables'
 
 const RESOLUTION = 512;
 const LINE_STYLE = { color: '#1bce9e' };
@@ -19,7 +20,7 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
     const plotWrapperRef = useRef(null);
     const [plotSize, setPlotSize] = useState({ width: 300, height: 300 });
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const el = plotWrapperRef.current;
         if (!el) return;
 
@@ -32,161 +33,134 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
         return () => observer.disconnect();
     }, []);
 
-    const w = useMemo(() => {
-        if (plotOptions.logScale) {
-            // log spacing from min to max
-            const logMin = -4;
-            const logMax = Math.log10(Math.PI);
-            return Array.from({ length: RESOLUTION }, (_, i) =>
-                Math.pow(10, logMin + (logMax - logMin) * (i / (RESOLUTION - 1)))
-            );
-        } else {
-            // linear spacing
-            return Array.from({ length: RESOLUTION }, (_, i) =>
-                (Math.PI * i) / (RESOLUTION - 1)
-            );
-        }
+    const frequencyVector = useMemo(() => {
+        const log = plotOptions.logScale;
+        return Array.from({ length: RESOLUTION }, (_, i) => {
+            const t = i / (RESOLUTION - 1);
+            return log
+                ? Math.pow(10, -4 + t * (Math.log10(Math.PI) + 4))
+                : t * Math.PI;
+        });
     }, [plotOptions.logScale]);
 
-    const plotData = useMemo(() => {
+    const generatePhaseData = useMemo(() => {
         const complexPoles = poles.map(p => new Complex(p.pos.real, p.pos.imag));
+
         if (enforceRealOutput) {
-            const conjugates = complexPoles
-                .filter(p => p.im !== 0)
-                .map(p => new Complex(p.re, -p.im));
-            complexPoles.push(...conjugates);
+            complexPoles.push(
+                ...complexPoles
+                    .filter(p => p.im !== 0)
+                    .map(p => new Complex(p.re, -p.im))
+            );
         }
 
-        const H = calculateAllPassFrequencyResponse(w, complexPoles);
-        const rawPhase = getPhase(H);
-        const unwrappedPhase = unwrapPhase(rawPhase);
+        const H = calculateAllPassFrequencyResponse(frequencyVector, complexPoles);
+        const phase = unwrapPhase(getPhase(H));
 
         let y;
         switch (plotOptions.display) {
             case 'group-delay':
-                y = calculateGroupDelay(unwrappedPhase, w);
+                y = calculateGroupDelay(phase, frequencyVector);
                 break;
             case 'phase-delay':
-                y = calculatePhaseDelay(unwrappedPhase, w);
+                y = calculatePhaseDelay(phase, frequencyVector);
                 break;
             case 'phase':
             default:
-                y = unwrappedPhase;
+                y = phase;
         }
 
-        // Apply y-axis unit conversion
-        if (plotOptions.display === 'phase') {
-            if (plotOptions.yUnits === 'degrees') {
-                y = y.map(v => v * (180 / Math.PI));
-            }
+        if (plotOptions.display === 'phase' && plotOptions.yUnits === 'degrees') {
+            y = y.map(v => v * (180 / Math.PI));
         } else if (plotOptions.yUnits === 'seconds') {
             y = y.map(v => v / sampleRate);
         }
 
-        // Compute x-axis
         const x = plotOptions.xUnits === 'hz'
-            ? w.map(w => (w * sampleRate) / (2 * Math.PI))
-            : w;
+            ? frequencyVector.map(w => (w * sampleRate) / (2 * Math.PI))
+            : frequencyVector;
 
-        return [{
-            x,
-            y,
-            type: 'scatter',
-            mode: 'lines',
-            line: LINE_STYLE
-        }];
-    }, [w, poles, enforceRealOutput, plotOptions, sampleRate]);
+        return [{ x, y, type: 'scatter', mode: 'lines', line: LINE_STYLE }];
+    }, [frequencyVector, poles, enforceRealOutput, plotOptions, sampleRate]);
 
     const layout = useMemo(() => {
-        const xTitle = plotOptions.xUnits === 'hz' ? 'Frequency (Hz)' : 'Frequency (rad/sample)';
-
-        let yTitle = '';
-        if (plotOptions.display === 'phase') {
-            yTitle = `Phase (${plotOptions.yUnits === 'degrees' ? 'degrees' : 'radians'})`;
-        } else if (plotOptions.display === 'group-delay') {
-            yTitle = `Group Delay (${plotOptions.yUnits === 'seconds' ? 's' : 'samples'})`;
-        } else {
-            yTitle = `Phase Delay (${plotOptions.yUnits === 'seconds' ? 's' : 'samples'})`;
-        }
+        const getYTitle = () => {
+            const unit = plotOptions.yUnits;
+            if (plotOptions.display === 'phase') return `Phase (${unit === 'degrees' ? 'degrees' : 'radians'})`;
+            if (plotOptions.display === 'group-delay') return `Group Delay (${unit === 'seconds' ? 's' : 'samples'})`;
+            return `Phase Delay (${unit === 'seconds' ? 's' : 'samples'})`;
+        };
 
         return {
             margin: { t: 20, r: 10, b: 40, l: 50 },
             width: plotSize.width,
             height: plotSize.height,
             xaxis: {
-                title: xTitle,
+                title: plotOptions.xUnits === 'hz' ? 'Frequency (Hz)' : 'Frequency (rad/sample)',
                 type: plotOptions.logScale ? 'log' : 'linear',
-                range: plotOptions.logScale ?
-                    [0.01, Math.log10(plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI)] :
-                    [0.0, plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI],
+                range: plotOptions.logScale
+                    ? [0.01, Math.log10(plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI)]
+                    : [0.0, plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI]
             },
             yaxis: {
-                title: yTitle,
+                title: getYTitle(),
                 autorange: true
             },
             modebar: { orientation: 'v' }
         };
     }, [plotOptions, sampleRate, plotSize]);
 
-    const config = {
-        responsive: false,
+    const config = useMemo(() => ({
+        responsive: true,
         displaylogo: false
-    };
+    }), []);
 
     return (
         <div className="section-container">
             <div className="action-row">
-                <label>
-                    Display:
-                    <select value={plotOptions.display} onChange={e => updatePlotOptions('display', e.target.value)}>
-                        <option value="phase">Phase</option>
-                        <option value="phase-delay">Phase Delay</option>
-                        <option value="group-delay">Group Delay</option>
-                    </select>
-                </label>
-
-                <label>
-                    X Units:
-                    <select value={plotOptions.xUnits} onChange={e => updatePlotOptions('xUnits', e.target.value)}>
-                        <option value="rads-per-sample">Rad/sample</option>
-                        <option value="hz">Hz</option>
-                    </select>
-                </label>
-
-                <label>
-                    Y Units:
-                    <select value={plotOptions.yUnits} onChange={e => updatePlotOptions('yUnits', e.target.value)}>
-                        {plotOptions.display === 'phase' ? (
-                            <>
-                                <option value="rads">Radians</option>
-                                <option value="degrees">Degrees</option>
-                            </>
-                        ) : (
-                            <>
-                                <option value="samples">Samples</option>
-                                <option value="seconds">Seconds</option>
-                            </>
-                        )}
-                    </select>
-                </label>
-
-                <label>
-                    Log Scale:
-                    <input
-                        type="checkbox"
-                        checked={plotOptions.logScale}
-                        onChange={e => updatePlotOptions('logScale', e.target.checked)}
-                    />
-                </label>
-            </div>
-            <div ref={plotWrapperRef} className='plot'>
-                <Plot
-                    data={plotData}
-                    layout={layout}
-                    config={config}
+                <Selector
+                    label="Display"
+                    tooltip="What quantity to display on the y-axis"
+                    value={plotOptions.display}
+                    options={[
+                        ['phase', 'Phase'],
+                        ['phase-delay', 'Phase Delay'],
+                        ['group-delay', 'Group Delay']
+                    ]}
+                    onChange={(val) => updatePlotOptions('display', val)}
+                />
+                <Selector
+                    label="X Units"
+                    tooltip="Units of the frequency axis"
+                    value={plotOptions.xUnits}
+                    options={[
+                        ['rads-per-sample', 'Rad/sample'],
+                        ['hz', 'Hz']
+                    ]}
+                    onChange={(val) => updatePlotOptions('xUnits', val)}
+                />
+                <Selector
+                    label="Y Units"
+                    tooltip="Units for the vertical axis"
+                    value={plotOptions.yUnits}
+                    options={
+                        plotOptions.display === 'phase'
+                            ? [['rads', 'Radians'], ['degrees', 'Degrees']]
+                            : [['samples', 'Samples'], ['seconds', 'Seconds']]
+                    }
+                    onChange={(val) => updatePlotOptions('yUnits', val)}
+                />
+                <Toggle
+                    label="Log Scale"
+                    tooltip="Use logarithmic x-axis"
+                    checked={plotOptions.logScale}
+                    onChange={(e) => updatePlotOptions('logScale', e)}
                 />
             </div>
 
+            <div ref={plotWrapperRef} className='plot'>
+                <Plot data={generatePhaseData} layout={layout} config={config} />
+            </div>
         </div>
     );
 }

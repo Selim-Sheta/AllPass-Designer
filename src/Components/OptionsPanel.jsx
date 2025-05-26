@@ -2,7 +2,7 @@
 
 // App-wide settings panel: controls display mode, coordinate system, and conjugate pairing
 import React, { useState } from 'react';
-import  Toggle  from './Toggle';
+import { Toggle, TextInput }  from './Interactables';
 import { LuSave, LuFolderOpen, LuShare2, LuSettings } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
@@ -39,6 +39,13 @@ export default function OptionsPanel({ options, updateOption, onSave, onLoad, on
                         tooltip="Turn on dark mode"
                         checked={options.displayTheme === 'dark'}
                         onChange={(e) => updateOption('displayTheme', e ? 'dark' : 'light')}
+                    />
+                    <TextInput
+                        label="Sample Rate:"
+                        tooltip="Sample Rate in Hz"
+                        value = {options.sampleRate}
+                        onChange= {(val) => updateOption('sampleRate', val)}
+                        type = "number"
                     />
                 </div>
             )}

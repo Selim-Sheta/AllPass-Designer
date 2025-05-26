@@ -1,6 +1,16 @@
 /* S.Sheta 2025 
 /* Text buttons, icon buttons, input fields, toggles, etc */
 
+.action-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+
 button {
     background: var(--neutral);
     border: none;
@@ -48,19 +58,8 @@ button:hover {
     height: 20px;
 }
 
-.toggle {
-    display: inline-block;
-}
-
-.toggle label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
-
 .toggle-track {
-    width: 34px;
+    width: 30px;
     height: 12px;
     background-color: var(--neutral2-transparent);
     border-radius: 9999px;
@@ -88,29 +87,21 @@ button:hover {
 }
 
 .toggle-track.on .toggle-head {
-    transform: translateX(20px);
+    transform: translateX(15px);
     background-color: var(--primary);
 }
 
-.action-row {
+label {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
     align-items: center;
-    gap: 10px;
-    margin: 10px;
-}
-
-.plot .action-row label {
-    display: flex;
-    flex-direction: column;
+    justify-content: center;
     font-size: 0.9rem;
     color: var(--text);
-    gap: 4px;
+    gap: 8px;
 }
 
-.plot .action-row select {
+select {
     padding: 6px 10px;
     border-radius: 6px;
     background-color: var(--neutral);
@@ -121,19 +112,14 @@ button:hover {
     filter: drop-shadow(2px 2px 2px var(--shadow-color));
 }
 
-.plot .action-row select:hover,
-.plot .action-row select:focus {
+select:hover,
+select:focus {
     background: var(--transparent-grey);
 }
 
-body.dark .plot .action-row select:hover,
-body.dark .plot .action-row select:focus {
+body.dark select:hover,
+body.dark select:focus {
     background: #333333;
-}
-
-.plot .action-row input[type="checkbox"] {
-    transform: scale(1.2);
-    cursor: pointer;
 }
 
 input {

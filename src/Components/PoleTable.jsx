@@ -140,10 +140,10 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
                     </colgroup>
                     <thead>
                         <tr>
-                            <th className="table-cell first-col">ID</th>
-                            <th className="table-cell">{coordSystem === 'rect' ? 'Real' : 'Mag'}</th>
-                            <th className="table-cell">{coordSystem === 'rect' ? 'Imag' : 'Angle'}</th>
-                            <th><button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button></th>
+                            <th>ID</th>
+                            <th>{coordSystem === 'rect' ? 'Real' : 'Mag'}</th>
+                            <th>{coordSystem === 'rect' ? 'Imag' : 'Angle'}</th>
+                            <th><button title="Add a pole" className="icon-button" onClick={addPole}><LuCirclePlus></LuCirclePlus></button></th>
                         </tr>
                     </thead>
                     <tbody>
