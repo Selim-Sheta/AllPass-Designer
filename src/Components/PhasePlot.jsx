@@ -1,7 +1,7 @@
 // S. Sheta 2025
 // Displays a frequency-domain plot of phase, phase delay, or group delay
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from 'react';
 import Plot from 'react-plotly.js';
 import Complex from 'complex.js';
 import {
@@ -16,13 +16,29 @@ const RESOLUTION = 512;
 const LINE_STYLE = { color: '#1bce9e' };
 
 export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOptions, updatePlotOptions }) {
+    const plotWrapperRef = useRef(null);
+    const [plotSize, setPlotSize] = useState({ width: 300, height: 300 });
+
+    useEffect(() => {
+        const el = plotWrapperRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver(([entry]) => {
+            const { width, height } = entry.contentRect;
+            setPlotSize({ width, height });
+        });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
     const w = useMemo(() => {
         if (plotOptions.logScale) {
             // log spacing from min to max
             const logMin = -4;
             const logMax = Math.log10(Math.PI);
             return Array.from({ length: RESOLUTION }, (_, i) =>
-                Math.pow(10,logMin + (logMax - logMin) * (i / (RESOLUTION - 1)))
+                Math.pow(10, logMin + (logMax - logMin) * (i / (RESOLUTION - 1)))
             );
         } else {
             // linear spacing
@@ -82,9 +98,7 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
     }, [w, poles, enforceRealOutput, plotOptions, sampleRate]);
 
     const layout = useMemo(() => {
-        const xTitle = plotOptions.xUnits === 'hz'
-            ? 'Frequency (Hz)'
-            : 'Frequency (rad/sample)';
+        const xTitle = plotOptions.xUnits === 'hz' ? 'Frequency (Hz)' : 'Frequency (rad/sample)';
 
         let yTitle = '';
         if (plotOptions.display === 'phase') {
@@ -97,12 +111,13 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
 
         return {
             margin: { t: 20, r: 10, b: 40, l: 50 },
-            height: 350,
+            width: plotSize.width,
+            height: plotSize.height,
             xaxis: {
                 title: xTitle,
                 type: plotOptions.logScale ? 'log' : 'linear',
-                range: plotOptions.logScale ? 
-                    [0.01, Math.log10(plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI)] : 
+                range: plotOptions.logScale ?
+                    [0.01, Math.log10(plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI)] :
                     [0.0, plotOptions.xUnits === 'hz' ? sampleRate / 2 : Math.PI],
             },
             yaxis: {
@@ -111,7 +126,7 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
             },
             modebar: { orientation: 'v' }
         };
-    }, [plotOptions, sampleRate]);
+    }, [plotOptions, sampleRate, plotSize]);
 
     const config = {
         responsive: false,
@@ -119,8 +134,8 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
     };
 
     return (
-        <div className="filter-design-element plot">
-            <div className="btn-row">
+        <div className="section-container">
+            <div className="action-row">
                 <label>
                     Display:
                     <select value={plotOptions.display} onChange={e => updatePlotOptions('display', e.target.value)}>
@@ -164,11 +179,14 @@ export default function PhasePlot({ poles, enforceRealOutput, sampleRate, plotOp
                     />
                 </label>
             </div>
-            <Plot
-                data={plotData}
-                layout={layout}
-                config={config}
-            />
+            <div ref={plotWrapperRef} className='plot'>
+                <Plot
+                    data={plotData}
+                    layout={layout}
+                    config={config}
+                />
+            </div>
+
         </div>
     );
 }

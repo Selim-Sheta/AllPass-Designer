@@ -56,8 +56,8 @@ export default function CoeffTable({ poles, enforceRealOutput }) {
     }
 
     return (
-        <div className="filter-design-element">
-            <div className="btn-row">
+        <div className="section-container">
+            <div className="action-row">
                 <button title="Download coefficients as a txt file." className='text-button' onClick={triggerDownload}>Download</button>
                 <button title="Copy coefficients to clipboard." className='text-button' onClick={triggerCopy}>{copied ? 'Copied!' : 'Copy'}</button>
             </div>

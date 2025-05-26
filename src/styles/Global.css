@@ -6,8 +6,12 @@
     --background2: #ffffff;
     --text: #04131e;
     --primary: #1bce9e;
+    --primary-transparent: hsla(164, 77%, 46%, 0.5);
     --secondary: #7587ee;
     --neutral: #babed6;
+    --neutral-transparent: rgba(186, 190, 214, 0.5);
+    --neutral2: rgb(92, 96, 113);
+    --neutral2-transparent: rgba(92, 96, 113, 0.5);
     --transparent-grey: rgba(0, 0, 0, 0.1);
     --shadow-color: rgba(0, 0, 0, 0.1);
 }
@@ -27,9 +31,12 @@ body,
 /* Dark theme overrides */
 body.dark {
     --background: #000000;
-    --background2: hsl(205, 76%, 8%);
+    --background2: #051724;
     --text: #ffffff;
     --neutral: #5c6071;
+    --neutral2: #e5e9ff;
+    --neutral-transparent: rgba(92, 96, 113, 0.5);
+    --neutral2-transparent: rgba(186, 190, 214, 0.5);
     --transparent-grey: rgba(255, 255, 255, 0.2);
     --shadow-color: hsl(204, 77%, 7%);
 }
@@ -58,7 +65,7 @@ th
     align-items: center;
 }
 
-@media (max-aspect-ratio: 3/4) {
+@media (max-aspect-ratio: 1/1) {
     .app-container{
         height: 200vh;
     }
@@ -72,7 +79,6 @@ header {
     align-items: center;
     background-color: var(--background2);
     filter: drop-shadow(0px 0px 10px var(--shadow-color));
-    padding: 6px;
 }
 
 main {
@@ -132,7 +138,7 @@ main {
 }
 
 /* Small: portrait/stacked layout */
-@media (max-aspect-ratio: 3/4) {
+@media (max-aspect-ratio: 1/1) {
     main {
         grid-template-areas:
             "circle"
@@ -143,7 +149,7 @@ main {
     }
 }
 
-.filter-design-element {
+.section-container {
     height: 100%;
     width: 100%;
     display: flex;
@@ -154,8 +160,8 @@ main {
     min-width: 0;
 }
 
-@media (max-aspect-ratio: 4/3) {
-    .filter-design-element {
+@media (max-aspect-ratio: 1/1) {
+    .section-container {
         justify-content: center;
     }
 }

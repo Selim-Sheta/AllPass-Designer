@@ -129,7 +129,7 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
     }
 
     return (
-        <div className="filter-design-element">
+        <div className="section-container">
             <div className="scrollable-table">
                 <table>
                     <colgroup>

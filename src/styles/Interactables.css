@@ -1,46 +1,36 @@
 /* S.Sheta 2025 
 /* Text buttons, icon buttons, input fields, toggles, etc */
 
-.text-button {
+button {
     background: var(--neutral);
     border: none;
     color: var(--text);
-    font-size: 0.95rem;
-    padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
-    margin: 10px;
     filter: drop-shadow(2px 2px 2px var(--shadow-color));
 }
 
-.text-button:hover {
-    background: rgba(0, 0, 0, 0.1);
+button:hover {
+    background: var(--transparent-grey);
     filter: none;
 }
 
-body.dark .text-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+.text-button {
+    font-size: 0.95rem;
+    padding: 6px 12px;
 }
 
 .icon-button {
-    background: var(--neutral);
-    border: none;
-    color: var(--text);
+    width: 36px;
+    height: 36px;
     padding: 6px;
-    border-radius: 6px;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease, color 0.2s ease;
-    margin: 10px;
-    width: 36px;
-    height: 36px;
-    filter: drop-shadow(2px 2px 2px var(--shadow-color));
 }
 
-.icon-button.active-settings {
+.icon-button.active {
     background: var(--transparent-grey);
 }
 
@@ -53,44 +43,66 @@ body.dark .text-button:hover {
     user-select: none;
 }
 
-.icon-button:hover {
-    background: var(--transparent-grey);
-}
-
 .icon-button svg {
     width: 20px;
     height: 20px;
 }
 
-/* Checked thumb */
-.MuiSwitch-switchBase.Mui-checked {
-    color: var(--primary) !important;
+.toggle {
+    display: inline-block;
 }
 
-/* Checked track */
-.MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track {
-    background-color: var(--primary) !important;
-}
-
-/* Unchecked track */
-.MuiSwitch-track {
-    background-color: #5c6071 !important;
-}
-
-body.dark .MuiSwitch-track {
-    background-color: #e5e9ff !important;
-}
-
-.plot .btn-row {
+.toggle label {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
     align-items: center;
-    margin-bottom: 12px;
-    padding: 0 10px;
+    gap: 0.5rem;
+    font-size: 0.9rem;
 }
 
-.plot .btn-row label {
+.toggle-track {
+    width: 34px;
+    height: 12px;
+    background-color: var(--neutral2-transparent);
+    border-radius: 9999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.1s;
+    padding: 0px;
+    filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.toggle-track.on {
+    background-color: var(--primary-transparent);
+}
+
+.toggle-head {
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.1s;
+    pointer-events: none;
+    filter: drop-shadow(0px 0px 2px var(--shadow-color));
+    transform: translateX(-1px);
+}
+
+.toggle-track.on .toggle-head {
+    transform: translateX(20px);
+    background-color: var(--primary);
+}
+
+.action-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+
+.plot .action-row label {
     display: flex;
     flex-direction: column;
     font-size: 0.9rem;
@@ -98,7 +110,7 @@ body.dark .MuiSwitch-track {
     gap: 4px;
 }
 
-.plot .btn-row select {
+.plot .action-row select {
     padding: 6px 10px;
     border-radius: 6px;
     background-color: var(--neutral);
@@ -109,21 +121,21 @@ body.dark .MuiSwitch-track {
     filter: drop-shadow(2px 2px 2px var(--shadow-color));
 }
 
-.plot .btn-row select:hover,
-.plot .btn-row select:focus {
+.plot .action-row select:hover,
+.plot .action-row select:focus {
     background: var(--transparent-grey);
 }
 
-body.dark .plot .btn-row select:hover,
-body.dark .plot .btn-row select:focus {
+body.dark .plot .action-row select:hover,
+body.dark .plot .action-row select:focus {
     background: #333333;
 }
 
-.plot .btn-row input[type="checkbox"] {
+.plot .action-row input[type="checkbox"] {
     transform: scale(1.2);
     cursor: pointer;
 }
 
-input{
+input {
     text-overflow: ellipsis;
 }
