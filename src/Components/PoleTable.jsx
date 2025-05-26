@@ -36,111 +36,120 @@ export default function PoleTable({ poles, onAdd, onEdit, onDelete, coordSystem,
         onEdit(poleId, { real, imag });
     }
 
-    const makeInput = (value, onChangeFn, step, min, max, key, label) => (
-        <input
-            key={key}
-            className="table-cell"
-            type="number"
-            step={step}
-            value={value}
-            min={min}
-            max={max}
-            onChange={(e) => onChangeFn(parseFloat(e.target.value))}
-            onBlur={(e) => onChangeFn(parseFloat(e.target.value))}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter') onChangeFn(parseFloat(e.target.value));
-            }}
-            aria-label={label}
-        />
+    const makeInputField = (value, onChangeFn, step, min, max, key, label) => (
+        <td key={key}>
+            <input
+                className="table-cell"
+                type="number"
+                step={step}
+                value={value}
+                min={min}
+                max={max}
+                onChange={(e) => onChangeFn(parseFloat(e.target.value))}
+                onBlur={(e) => onChangeFn(parseFloat(e.target.value))}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') onChangeFn(parseFloat(e.target.value));
+                }}
+                aria-label={label}
+            />
+        </td>
     );
 
-    function renderPoleRow(pole, isGhost = false) {
+    function renderPoleRow(pole, enforceRealOutput = false) {
         const { id, pos } = pole;
-        const readOnly = isGhost;
+        const hasGhost = enforceRealOutput && Math.abs(pos.imag) > 1e-7;
 
-        let inputs;
+        const makeSingleRow = (p, isGhost = false) => {
+            let inputFields;
+            if (coordSystem === 'rect') {
+                inputFields = [
+                    makeInputField(
+                        p.pos.real.toFixed(4),
+                        val => !isGhost && onUserInput(p.id, val, p.pos.imag),
+                        '0.01', '-1', '1',
+                        `${p.id}-real`,
+                        `Real part for pole ${p.id}`
+                    ),
+                    makeInputField(
+                        p.pos.imag.toFixed(4),
+                        val => !isGhost && onUserInput(p.id, p.pos.real, val),
+                        '0.01', '-1', '1',
+                        `${p.id}-imag`,
+                        `Imaginary part for pole ${p.id}`
+                    ),
+                ];
+            } else {
+                const mag = Math.hypot(p.pos.real, p.pos.imag);
+                const angle = Math.atan2(p.pos.imag, p.pos.real) * (180 / Math.PI);
+                inputFields = [
+                    makeInputField(
+                        mag.toFixed(4),
+                        val => !isGhost && onUserInput(p.id, val, angle),
+                        '0.01', '0', '1',
+                        `${p.id}-mag`,
+                        `Magnitude for pole ${p.id}`
+                    ),
+                    makeInputField(
+                        angle.toFixed(2),
+                        val => !isGhost && onUserInput(p.id, mag, val),
+                        '0.1', '-180', '180',
+                        `${p.id}-angle`,
+                        `Angle (deg) for pole ${p.id}`
+                    ),
+                ];
+            }
 
-        if (coordSystem === 'rect') {
-            inputs = [
-                makeInput(
-                    pos.real.toFixed(4),
-                    val => !readOnly && onUserInput(id, val, pos.imag),
-                    '0.01', '-1', '1',
-                    `${id}-real`,
-                    `Real part for pole ${id}`
-                ),
-                makeInput(
-                    pos.imag.toFixed(4),
-                    val => !readOnly && onUserInput(id, pos.real, val),
-                    '0.01', '-1', '1',
-                    `${id}-imag`,
-                    `Imaginary part for pole ${id}`
-                ),
-            ];
-        } else {
-            const mag = Math.hypot(pos.real, pos.imag);
-            const angle = Math.atan2(pos.imag, pos.real) * (180 / Math.PI);
-            inputs = [
-                makeInput(
-                    mag.toFixed(4),
-                    val => !readOnly && onUserInput(id, val, angle),
-                    '0.01', '0', '1',
-                    `${id}-mag`,
-                    `Magnitude for pole ${id}`
-                ),
-                makeInput(
-                    angle.toFixed(2),
-                    val => !readOnly && onUserInput(id, mag, val),
-                    '0.1', '-180', '180',
-                    `${id}-angle`,
-                    `Angle (deg) for pole ${id}`
-                ),
-            ];
+            return (
+                <tr
+                    key={`${p.id}-${isGhost ? 'ghost' : 'real'}`}
+                    className={isGhost ? 'ghost' : ''}
+                >
+                    <td className={isGhost ? 'ghost' : ''}>{p.id}</td>
+                    {inputFields}
+                    {!isGhost && (
+                        <td rowSpan={hasGhost ? 2 : 1}>
+                            <button className="icon-button small" onClick={() => onDelete(p.id)}>×</button>
+                        </td>
+                    )}
+                </tr>
+            );
+        };
+
+        const rows = [makeSingleRow(pole, false)];
+
+        if (hasGhost) {
+            const ghost = {
+                ...pole,
+                pos: { real: pos.real, imag: -pos.imag }
+            };
+            rows.push(makeSingleRow(ghost, true));
         }
 
-        return (
-            <div 
-                key={`${id}-${isGhost ? 'ghost' : 'real'}`} 
-                className={`table-row${isGhost ? ' ghost' : ''}`}
-            >
-                <span className={`table-cell${isGhost ? ' ghost' : ''} first-col`}>{id}</span>
-                {inputs}
-                {!readOnly ? (<button className="icon-button small table-cell" onClick={() => onDelete(id)}>×</button>) : <span/>}
-            </div>
-        );
+        return rows;
     }
 
     return (
         <div className="filter-design-element">
-            <div id="poles-table" className="scrollable-table">
-                <div className="table-row table-headers">
-                    {coordSystem === 'rect' ? (
-                        <>
-                            <span className="table-cell first-col">ID</span>
-                            <span className="table-cell">Real</span>
-                            <span className="table-cell">Imag</span>
-                            <button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button>
-                        </>
-                    ) : (
-                        <>
-                            <span className="table-cell first-col">ID</span>
-                            <span className="table-cell">Mag</span>
-                            <span className="table-cell">Angle</span>
-                            <button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button>
-                        </>
-                    )}
-                </div>
-                {poles.flatMap((p) => {
-                    const rows = [renderPoleRow(p, false)];
-                    if (enforceRealOutput && Math.abs(p.pos.imag) > 1e-6) {
-                        const ghost = {
-                            ...p,
-                            pos: { real: p.pos.real, imag: -p.pos.imag }
-                        };
-                        rows.push(renderPoleRow(ghost, true));
-                    }
-                    return rows;
-                })}
+            <div className="scrollable-table">
+                <table>
+                    <colgroup>
+                        <col />
+                        <col style={{ width: '35%' }} />
+                        <col style={{ width: '35%' }} />
+                        <col />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th className="table-cell first-col">ID</th>
+                            <th className="table-cell">{coordSystem === 'rect' ? 'Real' : 'Mag'}</th>
+                            <th className="table-cell">{coordSystem === 'rect' ? 'Imag' : 'Angle'}</th>
+                            <th><button title="Add a pole" className="icon-button small table-cell" onClick={addPole}>+</button></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {poles.flatMap(p => renderPoleRow(p, enforceRealOutput))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

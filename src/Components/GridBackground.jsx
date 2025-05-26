@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const NUM_CIRCLES = 4;
+const NUM_CIRCLES = 3;
 const NUM_SPOKES = 12;
 const GRID_COLOR = '#ccc';
 

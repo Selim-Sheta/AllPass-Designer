@@ -23,7 +23,7 @@ export default function CoeffTable({ poles, enforceRealOutput }) {
         return { feedbackCoefficients: feedback, feedforwardCoefficients: feedforward };
     }, [poles, enforceRealOutput]);
 
-    const formatForDisplay = c => enforceRealOutput ? c.re.toFixed(6) : `${c.re.toFixed(6)} + ${c.im.toFixed(6)}i`;
+    const formatForDisplay = c => enforceRealOutput ? c.re.toFixed(6) : `${c.re.toFixed(3)} + ${c.im.toFixed(3)}i`;
     const formatForDownload = c => enforceRealOutput ? `${c.re}` : `${c.re}${c.im !== 0 ? (c.im < 0 ? ' - ' : ' + ') + Math.abs(c.im) + 'i' : ''}`;
 
     function triggerDownload() {
@@ -61,19 +61,30 @@ export default function CoeffTable({ poles, enforceRealOutput }) {
                 <button title="Download coefficients as a txt file." className='text-button' onClick={triggerDownload}>Download</button>
                 <button title="Copy coefficients to clipboard." className='text-button' onClick={triggerCopy}>{copied ? 'Copied!' : 'Copy'}</button>
             </div>
-            <div id="coeffs-table" className="scrollable-table">
-                <div className='table-row table-headers'>
-                    <span className='table-cell first-col'>Delay</span>
-                    <span className='table-cell'>Feedforward</span>
-                    <span className='table-cell'>Feedback</span>
-                </div>
-                {feedbackCoefficients.map((fb, i) => (
-                    <div className='table-row' key={i}>
-                        <span className='table-cell first-col'>{i}</span>
-                        <span className='table-cell'>{formatForDisplay(feedforwardCoefficients[i])}</span>
-                        <span className='table-cell'>{formatForDisplay(fb)}</span>
-                    </div>
-                ))}
+            <div className="scrollable-table">
+                <table>
+                    <colgroup>
+                        <col />
+                        <col style={{ width: '40%' }} />
+                        <col style={{ width: '40%' }} />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th className='table-cell first-col'>Delay</th>
+                            <th className='table-cell'>Feedforward</th>
+                            <th className='table-cell'>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {feedbackCoefficients.map((fb, i) => (
+                            <tr key={i}>
+                                <td className='table-cell first-col'>{i}</td>
+                                <td className='table-cell'>{formatForDisplay(feedforwardCoefficients[i])}</td>
+                                <td className='table-cell'>{formatForDisplay(fb)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

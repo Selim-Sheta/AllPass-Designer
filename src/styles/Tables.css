@@ -1,0 +1,67 @@
+/* S.Sheta 2025 */
+
+.scrollable-table {
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+    background-color: var(--background2);
+    padding: 10px;
+    filter: drop-shadow(2px 2px 5px var(--shadow-color));
+}
+
+.scrollable-table table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Sticky header */
+.scrollable-table thead {
+    position: sticky;
+    top: -10px;
+    background: var(--background2);
+    z-index: 1;
+}
+
+.scrollable-table th,
+.scrollable-table td {
+    border: 1px solid var(--neutral);
+    border-bottom: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    text-overflow: clip;
+    padding: 3px 10px 2px;
+}
+
+.scrollable-table td {
+    font-size: 0.9rem;
+}
+
+.scrollable-table tr.ghost td{
+    color: var(--neutral);
+    border-top: none;
+}
+
+.scrollable-table td.ghost{
+    text-decoration: overline;
+}
+
+.scrollable-table tr:first-child th {
+    border-top: none;
+}
+
+.scrollable-table tr:last-child td {
+    border-bottom: none;
+}
+
+.scrollable-table tr td:first-child,
+.scrollable-table tr th:first-child {
+    border-left: none;
+}
+
+.scrollable-table tr td:last-child,
+.scrollable-table tr th:last-child {
+    border-right: none;
+}

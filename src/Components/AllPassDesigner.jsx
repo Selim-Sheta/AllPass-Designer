@@ -125,8 +125,8 @@ export default function FilterDesigner() {
                 }}
                 onClearAll={clearAll}
             />
-            <div className="main-grid">
-                <div className="unit-circle-container">
+            <main>
+                <div className="grid-child unit-circle-container">
                     <UnitCircle
                         onAddPole={addPole}
                         onStartImmediateDrag={startImmediateDrag}
@@ -156,7 +156,7 @@ export default function FilterDesigner() {
                         ))}
                     </UnitCircle>
                 </div>
-                <div className="phase-plot-container">
+                <div className="grid-child phase-plot-container">
                     <PhasePlot
                         poles={poles}
                         enforceRealOutput={options.enforceRealOutput}
@@ -165,7 +165,7 @@ export default function FilterDesigner() {
                         updatePlotOptions={updatePlotOptions}
                     />
                 </div>
-                <div className="tables-container">
+                <div className="grid-child tables-container">
                     <PoleTable
                         poles={poles}
                         onAdd={addPole}
@@ -179,7 +179,7 @@ export default function FilterDesigner() {
                         enforceRealOutput={options.enforceRealOutput}
                     />
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

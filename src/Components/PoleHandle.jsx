@@ -77,7 +77,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
                         transform: `translate(${x - localRadius}px, ${-y - localRadius}px)`,
                         width: `${diameter}px`,
                         height: `${diameter}px`,
-                        opacity: Math.min(0.5, Math.max(0.1, Math.abs(imagValue))),
+                        opacity: Math.min(0.7, Math.max(0.3, Math.abs(imagValue))),
                         cursor: 'not-allowed',
                         zIndex: 0
                     }}

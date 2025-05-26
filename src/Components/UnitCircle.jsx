@@ -48,7 +48,7 @@ export default function UnitCircle({ children, onAddPole, onStartImmediateDrag, 
     };
 
     return (
-        <div className='filter-design-element'>
+        <div className='unit-circle-container'>
             <div
                 ref={ref}
                 className="unit-circle"

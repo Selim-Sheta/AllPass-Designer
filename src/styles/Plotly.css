@@ -1,0 +1,49 @@
+/* S.Sheta 2025 
+/* Plot component and js-plotly overrides */
+
+.plot {
+    width: 100%;
+}
+
+.js-plotly-plot {
+    background-color: var(--background2);
+    border-radius: 15px;
+    color: var(--text) !important;
+    filter: drop-shadow(2px 2px 5px var(--shadow-color));
+    width: 100%;
+    display: flex !important;
+}
+
+.js-plotly-plot .svg-container {
+    width: 100% !important;
+}
+
+.js-plotly-plot .modebar-container {
+    top: 10px !important;
+    right: 10px !important;
+}
+
+.js-plotly-plot .main-svg {
+    background: #002aff00 !important;
+}
+
+.js-plotly-plot .modebar-group {
+    background: #002aff00 !important;
+}
+
+.js-plotly-plot .modebar-btn path {
+    fill: var(--text) !important;
+}
+
+.js-plotly-plot .modebar-btn:hover path {
+    fill: var(--secondary) !important;
+}
+
+.js-plotly-plot .gridlayer path {
+    stroke: var(--neutral) !important;
+}
+
+.js-plotly-plot text {
+    color: var(--text) !important;
+    fill: var(--text) !important;
+}
