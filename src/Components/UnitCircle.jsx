@@ -47,12 +47,30 @@ export default function UnitCircle({ children, onAddPole, onStartImmediateDrag, 
         }
     };
 
+    const handleTouchStart = (e) => {
+        if (e.target.closest('.pole-handle')) return;
+
+        const touch = e.touches[0];
+        const dx = touch.clientX - center.x;
+        const dy = touch.clientY - center.y;
+        const distance = Math.hypot(dx, dy);
+
+        if (distance <= radius) {
+            const newPos = { x: dx, y: dy };
+            const newId = onAddPole(newPos);
+            if (newId !== null && newId !== undefined) {
+                onStartImmediateDrag(newId);
+            }
+        }
+    };
+
     return (
         <div className='unit-circle-container'>
             <div
                 ref={ref}
                 className="unit-circle"
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
             >
                 <GridBackground
                     width={radius * 2}

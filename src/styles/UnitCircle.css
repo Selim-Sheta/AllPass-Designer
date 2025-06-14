@@ -44,6 +44,7 @@
     color: #ffffff;
     padding-top: 3px;
     filter: drop-shadow(2px 2px 4px var(--shadow-color));
+    touch-action: none;
 }
 
 .pole-handle.active {

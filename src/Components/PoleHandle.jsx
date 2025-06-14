@@ -11,7 +11,7 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
     useEffect(() => {
         if (!isActive) return;
 
-        const handleMouseMove = (e) => {
+        const handlePointer = (clientX, clientY) => {
             const parentRect = ref.current?.parentElement?.getBoundingClientRect();
             if (!parentRect) return;
 
@@ -20,10 +20,10 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
                 y: parentRect.top + parentRect.height / 2
             };
 
-            const dx = e.clientX - center.x;
-            const dy = e.clientY - center.y;
+            const dx = clientX - center.x;
+            const dy = clientY - center.y;
             const angle = Math.atan2(dy, dx);
-            const clamped = Math.min(Math.hypot(dx, dy), radius); // stay inside unit circle
+            const clamped = Math.min(Math.hypot(dx, dy), radius);
 
             onDrag(id, {
                 x: clamped * Math.cos(angle),
@@ -31,15 +31,26 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
             });
         };
 
-        const handleMouseUp = () => {
-            onDragEnd(id);
+        const handleMouseMove = (e) => handlePointer(e.clientX, e.clientY);
+        const handleTouchMove = (e) => {
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                handlePointer(t.clientX, t.clientY);
+            }
         };
 
+        const handleEnd = () => onDragEnd(id);
+
         window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('mouseup', handleEnd);
+        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchend', handleEnd);
+
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('mouseup', handleEnd);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleEnd);
         };
     }, [isActive, radius, onDrag, onDragEnd, id]);
 
@@ -52,11 +63,17 @@ export default function PoleHandle({id, x, y, radius, isActive, onDragStart, onD
         }
     };
 
+    const handleTouchStart = (e) => {
+        e.stopPropagation();
+        onDragStart(id);
+    };
+
     return (
         <>
             <div
                 ref={ref}
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
                 className={`pole-handle${isActive ? ' active' : ''}`}
                 style={{
                     transform: `translate(${x - localRadius}px, ${y - localRadius}px)`,
